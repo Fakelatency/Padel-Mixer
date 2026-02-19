@@ -1,46 +1,68 @@
 // ==========================================
-// LocalStorage Persistence
+// API-Based Persistence (replaces localStorage)
 // ==========================================
 
 import { Tournament } from './types';
 
-const STORAGE_KEY = 'padel_tournaments';
-const LOCALE_KEY = 'padel_locale';
+const API_BASE = '/api/tournaments';
 
-export function saveTournament(tournament: Tournament): void {
-    if (typeof window === 'undefined') return;
-    const tournaments = listTournaments();
-    const idx = tournaments.findIndex((t) => t.id === tournament.id);
-    if (idx >= 0) {
-        tournaments[idx] = { ...tournament, updatedAt: new Date().toISOString() };
-    } else {
-        tournaments.push(tournament);
+async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+    const res = await fetch(url, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+        },
+        credentials: 'include', // send session cookie
+    });
+    if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tournaments));
+    return res.json();
 }
 
-export function loadTournament(id: string): Tournament | null {
-    if (typeof window === 'undefined') return null;
-    const tournaments = listTournaments();
-    return tournaments.find((t) => t.id === id) || null;
-}
-
-export function listTournaments(): Tournament[] {
-    if (typeof window === 'undefined') return [];
+export async function saveTournament(tournament: Tournament): Promise<void> {
     try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (!data) return [];
-        return JSON.parse(data) as Tournament[];
+        // Try PUT first (update)
+        await apiFetch(`${API_BASE}/${tournament.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ ...tournament, updatedAt: new Date().toISOString() }),
+        });
+    } catch {
+        // If not found, create
+        await apiFetch(API_BASE, {
+            method: 'POST',
+            body: JSON.stringify(tournament),
+        });
+    }
+}
+
+export async function loadTournament(id: string): Promise<Tournament | null> {
+    try {
+        return await apiFetch<Tournament>(`${API_BASE}/${id}`);
+    } catch {
+        return null;
+    }
+}
+
+export async function listTournaments(): Promise<Tournament[]> {
+    try {
+        return await apiFetch<Tournament[]>(API_BASE);
     } catch {
         return [];
     }
 }
 
-export function deleteTournament(id: string): void {
-    if (typeof window === 'undefined') return;
-    const tournaments = listTournaments().filter((t) => t.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tournaments));
+export async function deleteTournament(id: string): Promise<void> {
+    try {
+        await apiFetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+    } catch {
+        // ignore
+    }
 }
+
+// Locale stays in localStorage — no server roundtrip needed
+const LOCALE_KEY = 'padel_locale';
 
 export function saveLocale(locale: string): void {
     if (typeof window === 'undefined') return;

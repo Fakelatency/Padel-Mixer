@@ -1,12 +1,20 @@
 'use client';
 
 import { useApp } from '@/context/AppContext';
+import { authClient } from '@/lib/auth-client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Locale } from '@/lib/i18n';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
-    const { t, locale, setLocale } = useApp();
+    const { t, locale, setLocale, user } = useApp();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await authClient.signOut();
+        router.push('/login');
+        router.refresh();
+    };
 
     return (
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/30">
@@ -23,7 +31,7 @@ export default function Header() {
                     </div>
                 </Link>
 
-                <div className="flex items-center">
+                <div className="flex items-center gap-3">
                     <div className="flex rounded-full bg-navy-800/80 border border-navy-600/30 p-0.5 gap-0.5">
                         <button
                             onClick={() => setLocale('pl')}
@@ -53,6 +61,18 @@ export default function Header() {
                             DE
                         </button>
                     </div>
+
+                    {user && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-navy-300 hidden sm:inline">{user.name}</span>
+                            <button
+                                onClick={handleLogout}
+                                className="px-3 py-1.5 rounded-full text-xs font-bold bg-navy-800/80 border border-navy-600/30 text-navy-400 hover:text-white hover:border-red-500/30 transition-all"
+                            >
+                                {t.logout}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>

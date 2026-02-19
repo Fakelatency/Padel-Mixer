@@ -134,6 +134,21 @@ export interface Translations {
     previousPage: string;
     nextPage: string;
     pageOf: string;
+
+    // Auth
+    login: string;
+    loginSubtitle: string;
+    loginError: string;
+    loginLink: string;
+    register: string;
+    registerSubtitle: string;
+    registerError: string;
+    registerLink: string;
+    email: string;
+    password: string;
+    logout: string;
+    noAccount: string;
+    hasAccount: string;
 }
 
 const pl: Translations = {
@@ -252,6 +267,20 @@ const pl: Translations = {
     previousPage: 'Poprzednia',
     nextPage: 'Następna',
     pageOf: 'z',
+
+    login: 'Zaloguj się',
+    loginSubtitle: 'Zaloguj się, aby zarządzać turniejami',
+    loginError: 'Nieprawidłowy email lub hasło',
+    loginLink: 'Zaloguj się',
+    register: 'Zarejestruj się',
+    registerSubtitle: 'Utwórz konto, aby zapisywać turnieje',
+    registerError: 'Błąd rejestracji. Spróbuj ponownie.',
+    registerLink: 'Zarejestruj się',
+    email: 'Email',
+    password: 'Hasło',
+    logout: 'Wyloguj',
+    noAccount: 'Nie masz konta?',
+    hasAccount: 'Masz już konto?',
 };
 
 const en: Translations = {
@@ -370,6 +399,20 @@ const en: Translations = {
     previousPage: 'Previous',
     nextPage: 'Next',
     pageOf: 'of',
+
+    login: 'Sign In',
+    loginSubtitle: 'Sign in to manage your tournaments',
+    loginError: 'Invalid email or password',
+    loginLink: 'Sign in',
+    register: 'Sign Up',
+    registerSubtitle: 'Create an account to save your tournaments',
+    registerError: 'Registration failed. Please try again.',
+    registerLink: 'Sign up',
+    email: 'Email',
+    password: 'Password',
+    logout: 'Logout',
+    noAccount: 'Don\'t have an account?',
+    hasAccount: 'Already have an account?',
 };
 
 const de: Translations = {
@@ -488,6 +531,20 @@ const de: Translations = {
     previousPage: 'Zurück',
     nextPage: 'Weiter',
     pageOf: 'von',
+
+    login: 'Anmelden',
+    loginSubtitle: 'Melden Sie sich an, um Turniere zu verwalten',
+    loginError: 'Ungültige E-Mail oder Passwort',
+    loginLink: 'Anmelden',
+    register: 'Registrieren',
+    registerSubtitle: 'Erstellen Sie ein Konto, um Turniere zu speichern',
+    registerError: 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+    registerLink: 'Registrieren',
+    email: 'E-Mail',
+    password: 'Passwort',
+    logout: 'Abmelden',
+    noAccount: 'Noch kein Konto?',
+    hasAccount: 'Bereits ein Konto?',
 };
 
 export const translations: Record<Locale, Translations> = { pl, en, de };

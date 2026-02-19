@@ -3,7 +3,14 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
 import { Locale, getTranslations, Translations } from '@/lib/i18n';
 import { Tournament, TournamentSettings, Match, Player, Team } from '@/lib/types';
-import { saveTournament, loadTournament, listTournaments, deleteTournament as deleteStoredTournament, saveLocale, loadLocale } from '@/lib/storage';
+import {
+    saveTournament as apiSaveTournament,
+    loadTournament as apiLoadTournament,
+    listTournaments as apiListTournaments,
+    deleteTournament as apiDeleteTournament,
+    saveLocale,
+    loadLocale,
+} from '@/lib/storage';
 import { calculateStandings, calculateTeamStandings } from '@/lib/scoring';
 import {
     generateAmericanoRounds,
@@ -14,6 +21,7 @@ import {
     generateFinalAmericanoRound,
     generateAmericanoNextRound,
 } from '@/lib/scheduler';
+import { authClient } from '@/lib/auth-client';
 
 // ─── State ──────────────────────────────────────────────────
 interface AppState {
@@ -21,31 +29,31 @@ interface AppState {
     t: Translations;
     tournaments: Tournament[];
     currentTournament: Tournament | null;
+    user: { id: string; name: string; email: string } | null;
+    authLoading: boolean;
 }
 
 type Action =
     | { type: 'SET_LOCALE'; locale: Locale }
     | { type: 'LOAD_TOURNAMENTS'; tournaments: Tournament[] }
     | { type: 'SET_CURRENT_TOURNAMENT'; tournament: Tournament | null }
-    | { type: 'CREATE_TOURNAMENT'; settings: TournamentSettings }
-    | { type: 'UPDATE_SCORE'; matchId: string; score1: number; score2: number }
-    | { type: 'NEXT_ROUND' }
-    | { type: 'GENERATE_FINAL_ROUND' }
-    | { type: 'FINISH_TOURNAMENT' }
-    | { type: 'DELETE_TOURNAMENT'; id: string };
+    | { type: 'SET_TOURNAMENT_CREATED'; tournament: Tournament }
+    | { type: 'UPDATE_TOURNAMENT'; tournament: Tournament }
+    | { type: 'DELETE_TOURNAMENT'; id: string }
+    | { type: 'SET_USER'; user: AppState['user'] }
+    | { type: 'SET_AUTH_LOADING'; loading: boolean };
 
 function generateTournamentId(): string {
     return `t_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
 }
 
-function createTournament(settings: TournamentSettings): Tournament {
+function createTournamentData(settings: TournamentSettings): Tournament {
     const id = generateTournamentId();
     const now = new Date().toISOString();
     const roundMode = settings.roundMode || 'fixed';
 
     let rounds;
 
-    // In unlimited mode for Americano-type formats, only generate the first round
     if (roundMode === 'unlimited' && ['americano', 'mixedAmericano', 'teamAmericano'].includes(settings.format)) {
         const firstRound = generateAmericanoNextRound(settings.players, [], settings.courts);
         rounds = [firstRound];
@@ -107,122 +115,32 @@ function reducer(state: AppState, action: Action): AppState {
             return { ...state, currentTournament: action.tournament };
         }
 
-        case 'CREATE_TOURNAMENT': {
-            const tournament = createTournament(action.settings);
-            saveTournament(tournament);
-            const tournaments = [...state.tournaments, tournament];
-            return { ...state, tournaments, currentTournament: tournament };
+        case 'SET_TOURNAMENT_CREATED': {
+            const tournaments = [...state.tournaments, action.tournament];
+            return { ...state, tournaments, currentTournament: action.tournament };
         }
 
-        case 'UPDATE_SCORE': {
-            if (!state.currentTournament) return state;
-            const t = { ...state.currentTournament };
-            t.rounds = t.rounds.map((round) => ({
-                ...round,
-                matches: round.matches.map((match) => {
-                    if (match.id === action.matchId) {
-                        return {
-                            ...match,
-                            score1: action.score1,
-                            score2: action.score2,
-                            status: 'completed' as const,
-                        };
-                    }
-                    return match;
-                }),
-            }));
-
-            // Check if current round is complete
-            const currentRound = t.rounds[t.currentRound - 1];
-            if (currentRound) {
-                currentRound.completed = currentRound.matches.every(
-                    (m) => m.status === 'completed'
-                );
-            }
-
-            t.updatedAt = new Date().toISOString();
-            saveTournament(t);
-            const tournaments = state.tournaments.map((tour) =>
-                tour.id === t.id ? t : tour
+        case 'UPDATE_TOURNAMENT': {
+            const tournament = action.tournament;
+            const tournaments = state.tournaments.map((t) =>
+                t.id === tournament.id ? tournament : t
             );
-            return { ...state, currentTournament: t, tournaments };
-        }
-
-        case 'NEXT_ROUND': {
-            if (!state.currentTournament) return state;
-            const t = { ...state.currentTournament };
-            const nextRoundNumber = t.currentRound + 1;
-
-            // For Mexicano formats, generate next round dynamically
-            if (t.format === 'mexicano') {
-                const standings = calculateStandings(t);
-                const newRound = generateMexicanoRound(t.players, standings, nextRoundNumber, t.courts);
-                t.rounds = [...t.rounds, newRound];
-            } else if (t.format === 'teamMexicano') {
-                const teamStandings = calculateTeamStandings(t);
-                const newRound = generateTeamMexicanoRound(
-                    t.teams,
-                    t.players,
-                    teamStandings,
-                    nextRoundNumber,
-                    t.courts
-                );
-                t.rounds = [...t.rounds, newRound];
-            } else if (t.roundMode === 'unlimited') {
-                // Unlimited mode for Americano-type formats: generate next round dynamically
-                const newRound = generateAmericanoNextRound(t.players, t.rounds, t.courts);
-                t.rounds = [...t.rounds, newRound];
-            }
-
-            // For pre-generated rounds (fixed Americano), just advance
-            if (nextRoundNumber > t.rounds.length) {
-                // No more rounds - tournament should be finished
-                return state;
-            }
-
-            t.currentRound = nextRoundNumber;
-            t.updatedAt = new Date().toISOString();
-            saveTournament(t);
-            const tournaments = state.tournaments.map((tour) =>
-                tour.id === t.id ? t : tour
-            );
-            return { ...state, currentTournament: t, tournaments };
-        }
-
-        case 'GENERATE_FINAL_ROUND': {
-            if (!state.currentTournament) return state;
-            const t = { ...state.currentTournament };
-            const standings = calculateStandings(t);
-            const nextRoundNumber = t.currentRound + 1;
-            const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts);
-            finalRound.number = nextRoundNumber;
-            finalRound.matches = finalRound.matches.map((m) => ({ ...m, round: nextRoundNumber - 1 }));
-            t.rounds = [...t.rounds, finalRound];
-            t.currentRound = nextRoundNumber;
-            t.updatedAt = new Date().toISOString();
-            saveTournament(t);
-            const tournaments = state.tournaments.map((tour) =>
-                tour.id === t.id ? t : tour
-            );
-            return { ...state, currentTournament: t, tournaments };
-        }
-
-        case 'FINISH_TOURNAMENT': {
-            if (!state.currentTournament) return state;
-            const t = { ...state.currentTournament, status: 'finished' as const, updatedAt: new Date().toISOString() };
-            saveTournament(t);
-            const tournaments = state.tournaments.map((tour) =>
-                tour.id === t.id ? t : tour
-            );
-            return { ...state, currentTournament: t, tournaments };
+            return { ...state, currentTournament: tournament, tournaments };
         }
 
         case 'DELETE_TOURNAMENT': {
-            deleteStoredTournament(action.id);
             const tournaments = state.tournaments.filter((t) => t.id !== action.id);
             const currentTournament =
                 state.currentTournament?.id === action.id ? null : state.currentTournament;
             return { ...state, tournaments, currentTournament };
+        }
+
+        case 'SET_USER': {
+            return { ...state, user: action.user };
+        }
+
+        case 'SET_AUTH_LOADING': {
+            return { ...state, authLoading: action.loading };
         }
 
         default:
@@ -235,6 +153,13 @@ interface AppContextType extends AppState {
     dispatch: React.Dispatch<Action>;
     setLocale: (locale: Locale) => void;
     loadTournamentById: (id: string) => void;
+    createTournament: (settings: TournamentSettings) => Promise<Tournament>;
+    updateScore: (matchId: string, score1: number, score2: number) => void;
+    nextRound: () => void;
+    generateFinalRound: () => void;
+    finishTournament: () => void;
+    removeTournament: (id: string) => void;
+    refreshTournaments: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -246,29 +171,180 @@ export function AppProvider({ children }: { children: ReactNode }) {
         t: getTranslations(initialLocale),
         tournaments: [],
         currentTournament: null,
+        user: null,
+        authLoading: true,
     });
 
+    // ─── Auth Session ───────────────────────────────────────
+    const { data: session, isPending } = authClient.useSession();
+
+    useEffect(() => {
+        if (!isPending) {
+            dispatch({ type: 'SET_AUTH_LOADING', loading: false });
+            if (session?.user) {
+                dispatch({
+                    type: 'SET_USER',
+                    user: {
+                        id: session.user.id,
+                        name: session.user.name,
+                        email: session.user.email,
+                    },
+                });
+            } else {
+                dispatch({ type: 'SET_USER', user: null });
+            }
+        }
+    }, [session, isPending]);
+
+    // ─── Load locale + tournaments on mount ─────────────────
     useEffect(() => {
         const savedLocale = loadLocale() as Locale;
-        if (savedLocale && savedLocale !== state.locale) {
+        if (savedLocale && savedLocale !== initialLocale) {
             dispatch({ type: 'SET_LOCALE', locale: savedLocale });
         }
-        const tournaments = listTournaments();
-        dispatch({ type: 'LOAD_TOURNAMENTS', tournaments });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Load tournaments when user is authenticated
+    useEffect(() => {
+        if (state.user) {
+            apiListTournaments().then((tournaments) => {
+                dispatch({ type: 'LOAD_TOURNAMENTS', tournaments });
+            });
+        } else if (!state.authLoading) {
+            dispatch({ type: 'LOAD_TOURNAMENTS', tournaments: [] });
+        }
+    }, [state.user, state.authLoading]);
 
     const setLocale = useCallback((locale: Locale) => {
         dispatch({ type: 'SET_LOCALE', locale });
     }, []);
 
     const loadTournamentById = useCallback((id: string) => {
-        const tournament = loadTournament(id);
-        dispatch({ type: 'SET_CURRENT_TOURNAMENT', tournament });
+        apiLoadTournament(id).then((tournament) => {
+            dispatch({ type: 'SET_CURRENT_TOURNAMENT', tournament });
+        });
+    }, []);
+
+    const refreshTournaments = useCallback(() => {
+        apiListTournaments().then((tournaments) => {
+            dispatch({ type: 'LOAD_TOURNAMENTS', tournaments });
+        });
+    }, []);
+
+    // ─── Tournament Actions (async) ─────────────────────────
+
+    const createTournament = useCallback(async (settings: TournamentSettings): Promise<Tournament> => {
+        const tournament = createTournamentData(settings);
+        await apiSaveTournament(tournament);
+        dispatch({ type: 'SET_TOURNAMENT_CREATED', tournament });
+        return tournament;
+    }, []);
+
+    const updateScore = useCallback((matchId: string, score1: number, score2: number) => {
+        if (!state.currentTournament) return;
+        const t = { ...state.currentTournament };
+        t.rounds = t.rounds.map((round) => ({
+            ...round,
+            matches: round.matches.map((match) => {
+                if (match.id === matchId) {
+                    return {
+                        ...match,
+                        score1,
+                        score2,
+                        status: 'completed' as const,
+                    };
+                }
+                return match;
+            }),
+        }));
+
+        const currentRound = t.rounds[t.currentRound - 1];
+        if (currentRound) {
+            currentRound.completed = currentRound.matches.every(
+                (m) => m.status === 'completed'
+            );
+        }
+
+        t.updatedAt = new Date().toISOString();
+        apiSaveTournament(t);
+        dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+    }, [state.currentTournament]);
+
+    const nextRound = useCallback(() => {
+        if (!state.currentTournament) return;
+        const t = { ...state.currentTournament };
+        const nextRoundNumber = t.currentRound + 1;
+
+        if (t.format === 'mexicano') {
+            const standings = calculateStandings(t);
+            const newRound = generateMexicanoRound(t.players, standings, nextRoundNumber, t.courts);
+            t.rounds = [...t.rounds, newRound];
+        } else if (t.format === 'teamMexicano') {
+            const teamStandings = calculateTeamStandings(t);
+            const newRound = generateTeamMexicanoRound(
+                t.teams,
+                t.players,
+                teamStandings,
+                nextRoundNumber,
+                t.courts
+            );
+            t.rounds = [...t.rounds, newRound];
+        } else if (t.roundMode === 'unlimited') {
+            const newRound = generateAmericanoNextRound(t.players, t.rounds, t.courts);
+            t.rounds = [...t.rounds, newRound];
+        }
+
+        if (nextRoundNumber > t.rounds.length) {
+            return;
+        }
+
+        t.currentRound = nextRoundNumber;
+        t.updatedAt = new Date().toISOString();
+        apiSaveTournament(t);
+        dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+    }, [state.currentTournament]);
+
+    const generateFinalRound = useCallback(() => {
+        if (!state.currentTournament) return;
+        const t = { ...state.currentTournament };
+        const standings = calculateStandings(t);
+        const nextRoundNumber = t.currentRound + 1;
+        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts);
+        finalRound.number = nextRoundNumber;
+        finalRound.matches = finalRound.matches.map((m) => ({ ...m, round: nextRoundNumber - 1 }));
+        t.rounds = [...t.rounds, finalRound];
+        t.currentRound = nextRoundNumber;
+        t.updatedAt = new Date().toISOString();
+        apiSaveTournament(t);
+        dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+    }, [state.currentTournament]);
+
+    const finishTournament = useCallback(() => {
+        if (!state.currentTournament) return;
+        const t = { ...state.currentTournament, status: 'finished' as const, updatedAt: new Date().toISOString() };
+        apiSaveTournament(t);
+        dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+    }, [state.currentTournament]);
+
+    const removeTournament = useCallback((id: string) => {
+        apiDeleteTournament(id);
+        dispatch({ type: 'DELETE_TOURNAMENT', id });
     }, []);
 
     return (
-        <AppContext.Provider value={{ ...state, dispatch, setLocale, loadTournamentById }}>
+        <AppContext.Provider value={{
+            ...state,
+            dispatch,
+            setLocale,
+            loadTournamentById,
+            createTournament,
+            updateScore,
+            nextRound,
+            generateFinalRound,
+            finishTournament,
+            removeTournament,
+            refreshTournaments,
+        }}>
             {children}
         </AppContext.Provider>
     );

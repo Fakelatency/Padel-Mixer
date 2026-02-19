@@ -4,7 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const formatIcons: Record<string, string> = {
   americano: '🎾',
@@ -15,7 +15,7 @@ const formatIcons: Record<string, string> = {
 };
 
 export default function HomePage() {
-  const { t, tournaments, dispatch } = useApp();
+  const { t, tournaments, removeTournament, user, authLoading } = useApp();
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,9 +52,29 @@ export default function HomePage() {
   };
 
   const handleDelete = (id: string) => {
-    dispatch({ type: 'DELETE_TOURNAMENT', id });
+    removeTournament(id);
     setDeletingId(null);
   };
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [authLoading, user, router]);
+
+  if (authLoading) {
+    return (
+      <>
+        <Header />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-navy-400 text-lg">Loading...</div>
+        </div>
+      </>
+    );
+  }
+
+  if (!user) return null;
 
   const getStatusBadge = (status: string) => {
     switch (status) {

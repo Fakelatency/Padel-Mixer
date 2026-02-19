@@ -13,7 +13,7 @@ type SortMode = 'points' | 'wins';
 
 export default function ActiveTournamentPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const { t, loadTournamentById, currentTournament, dispatch } = useApp();
+    const { t, loadTournamentById, currentTournament, updateScore, nextRound, generateFinalRound, finishTournament } = useApp();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<Tab>('matches');
     const [editingMatch, setEditingMatch] = useState<string | null>(null);
@@ -85,18 +85,13 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
     const saveScore = () => {
         if (editingMatch && isScoreValid(tempScore1, tempScore2, tournament.scoringSystem)) {
-            dispatch({
-                type: 'UPDATE_SCORE',
-                matchId: editingMatch,
-                score1: tempScore1,
-                score2: tempScore2,
-            });
+            updateScore(editingMatch, tempScore1, tempScore2);
             setEditingMatch(null);
         }
     };
 
     const handleNextRound = () => {
-        dispatch({ type: 'NEXT_ROUND' });
+        nextRound();
     };
 
     const handleFinalRound = () => {
@@ -104,13 +99,13 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     };
 
     const confirmFinalRound = () => {
-        dispatch({ type: 'GENERATE_FINAL_ROUND' });
+        generateFinalRound();
         setShowFinalConfirm(false);
         setIsFinalRound(true);
     };
 
     const handleFinish = () => {
-        dispatch({ type: 'FINISH_TOURNAMENT' });
+        finishTournament();
         router.push(`/tournament/${tournament.id}/results`);
     };
 
@@ -120,10 +115,10 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     // Auto-finish when final round scores are all entered
     useEffect(() => {
         if (isFinalRound && isCurrentRoundComplete) {
-            dispatch({ type: 'FINISH_TOURNAMENT' });
+            finishTournament();
             router.push(`/tournament/${tournament.id}/results`);
         }
-    }, [isFinalRound, isCurrentRoundComplete, dispatch, router, tournament.id]);
+    }, [isFinalRound, isCurrentRoundComplete, finishTournament, router, tournament.id]);
 
     return (
         <>

@@ -43,3 +43,5 @@ next-env.d.ts
 # public
 /Logo_Baza_Padel
 
+
+/src/generated/prisma

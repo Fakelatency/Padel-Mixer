@@ -525,7 +525,7 @@ export default function NewTournamentPage() {
                                 )}
                             </div>
 
-                            <div className="glass-card-static p-5">
+                            <div className="glass-card-static mt-6 p-5">
                                 <div className="mb-3">
                                     <label className="block text-sm font-medium text-navy-300">
                                         {t.rankingPriority}

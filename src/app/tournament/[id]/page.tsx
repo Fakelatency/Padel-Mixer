@@ -35,6 +35,23 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
         loadTournamentById(id);
     }, [id, loadTournamentById]);
 
+    // Calculate derived state safely for effects
+    const currentRoundSafe = currentTournament?.rounds[currentTournament.currentRound - 1];
+    const isCurrentRoundCompleteSafe = currentRoundSafe?.matches.every(
+        (m) => m.status === 'completed'
+    ) ?? false;
+
+    // Auto-finish when final round scores are all entered
+    // This effect must be here (before any return) to follow Rules of Hooks
+    useEffect(() => {
+        if (!currentTournament) return;
+
+        if (isFinalRound && isCurrentRoundCompleteSafe) {
+            finishTournament();
+            router.push(`/tournament/${currentTournament.id}/results`);
+        }
+    }, [isFinalRound, isCurrentRoundCompleteSafe, finishTournament, router, currentTournament]);
+
     if (!currentTournament) {
         return (
             <>
@@ -109,16 +126,11 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     // Generate score options for the picker
     const scoreOptions = Array.from({ length: tournament.scoringSystem + 1 }, (_, i) => i);
 
-    // Auto-finish when final round scores are all entered
-    useEffect(() => {
-        if (isFinalRound && isCurrentRoundComplete) {
-            finishTournament();
-            router.push(`/tournament/${tournament.id}/results`);
-        }
-    }, [isFinalRound, isCurrentRoundComplete, finishTournament, router, tournament.id]);
+
 
     return (
         <>
+            <div className="court-bg" />
             <Header />
             <main className="max-w-4xl mx-auto px-4 py-6">
                 {/* Tournament Header */}
@@ -178,13 +190,18 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                             /* ── Court Card Score Editing ── */
                                             <div className="court-card animate-scale-in">
                                                 <div className="court-card-logo" />
-                                                <div className="court-card-service-top" />
-                                                <div className="court-card-service-bottom" />
-                                                <div className="court-card-center-line" />
+                                                <div className="court-lines">
+                                                    <div className="court-net" />
+                                                    <div className="court-line-service-left" />
+                                                    <div className="court-line-service-right" />
+                                                    <div className="court-line-center-left" />
+                                                    <div className="court-line-center-right" />
+                                                </div>
+                                                {/* <div className="court-card-logo" /> */}
                                                 <div className="court-card-content">
                                                     {/* Court label */}
-                                                    <div className="text-center mb-1">
-                                                        <span className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                                                    <div className="text-center mb-1 px-2">
+                                                        <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
                                                             {t.court} {match.court}
                                                         </span>
                                                     </div>
@@ -245,14 +262,18 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                 className="w-full text-left"
                                             >
                                                 <div className="court-card" style={{ minHeight: '140px', padding: '14px 12px' }}>
+                                                    <div className="court-lines">
+                                                        <div className="court-net" />
+                                                        <div className="court-line-service-left" />
+                                                        <div className="court-line-service-right" />
+                                                        <div className="court-line-center-left" />
+                                                        <div className="court-line-center-right" />
+                                                    </div>
                                                     <div className="court-card-logo" />
-                                                    <div className="court-card-service-top" />
-                                                    <div className="court-card-service-bottom" />
-                                                    <div className="court-card-center-line" />
                                                     <div className="court-card-content">
                                                         {/* Court label + completed badge */}
-                                                        <div className="flex items-center justify-between mb-2">
-                                                            <span className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                                                        <div className="flex items-center justify-between mb-2 px-1">
+                                                            <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
                                                                 {t.court} {match.court}
                                                             </span>
                                                             {match.status === 'completed' && (
@@ -414,22 +435,22 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-navy-700/50">
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-navy-400 uppercase tracking-wider">
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.position}
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-navy-400 uppercase tracking-wider">
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.player}
                                         </th>
-                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase tracking-wider">
+                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.points}
                                         </th>
-                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase tracking-wider hidden sm:table-cell">
+                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider hidden sm:table-cell">
                                             {t.played}
                                         </th>
-                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase tracking-wider hidden sm:table-cell">
+                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider hidden sm:table-cell">
                                             {t.won}
                                         </th>
-                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase tracking-wider">
+                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.diff}
                                         </th>
                                     </tr>

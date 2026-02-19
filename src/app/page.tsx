@@ -147,34 +147,34 @@ export default function HomePage() {
                   className="glass-card p-4 cursor-pointer animate-fade-in"
                   style={{ animationDelay: `${index * 0.05}s`, opacity: 0 }}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div
-                      className="flex items-center gap-4 flex-1"
+                      className="flex items-center gap-4 w-full sm:flex-1 cursor-pointer"
                       onClick={() =>
                         tournament.status === 'finished'
                           ? router.push(`/tournament/${tournament.id}/results`)
                           : router.push(`/tournament/${tournament.id}`)
                       }
                     >
-                      <div className="text-2xl">{formatIcons[tournament.format]}</div>
+                      <div className="text-3xl sm:text-2xl bg-navy-800/50 p-3 sm:p-0 rounded-xl sm:rounded-none sm:bg-transparent">{formatIcons[tournament.format]}</div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <h3 className="font-bold text-white truncate">{tournament.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
+                          <h3 className="font-bold text-white truncate max-w-[200px] sm:max-w-xs">{tournament.name}</h3>
                           {getStatusBadge(tournament.status)}
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-navy-300">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-navy-300">
                           <span>{getFormatLabel(tournament.format)}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>{tournament.players.length} {t.players.toLowerCase()}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>{tournament.courts} {t.courts.toLowerCase()}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>{tournament.scoringSystem} pkt</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4">
+                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:ml-4 border-t border-navy-700/50 pt-3 sm:border-0 sm:pt-0">
                       {tournament.status === 'active' && (
                         <button
                           onClick={() => router.push(`/tournament/${tournament.id}`)}

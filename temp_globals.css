@@ -355,15 +355,13 @@ body {
   border-radius: 10px;
   font-weight: 600;
   font-size: 14px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(136, 188, 232, 0.6);
   cursor: pointer;
   transition: all 0.3s;
   text-align: center;
   border: none;
   background: transparent;
   font-family: var(--font-sans);
-  opacity: 1;
 }
 
 .tab:hover {
@@ -372,14 +370,10 @@ body {
 }
 
 .tab.active {
-  background: var(--color-gold-500) !important;
-  color: var(--color-navy-950) !important;
-  box-shadow: 0 4px 12px rgba(245, 197, 24, 0.4) !important;
-  font-weight: 800 !important;
-  opacity: 1 !important;
-  border: none !important;
+  background: rgba(77, 148, 208, 0.2);
+  color: var(--color-gold-400);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-
 
 /* ─── Badge Styles ────────────────────────────────────────── */
 .badge {
@@ -521,7 +515,7 @@ body {
   /* Margin from glass walls */
   border: 2px solid rgba(255, 255, 255, 0.6);
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
 /* Center Net (Vertical) */
@@ -553,7 +547,6 @@ body {
   height: 6px;
   background: #333;
   border-radius: 2px;
-  z-index: 20;
 }
 
 .court-net::before {
@@ -583,7 +576,7 @@ body {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .court-line-service-right {
@@ -592,7 +585,7 @@ body {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Center Lines (Horizontal) */
@@ -605,7 +598,7 @@ body {
   right: 50%;
   /* End at net */
   height: 2px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
   transform: translateY(-50%);
 }
 
@@ -617,7 +610,7 @@ body {
   left: 50%;
   /* End at net */
   height: 2px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
   transform: translateY(-50%);
 }
 
@@ -633,12 +626,12 @@ body {
   opacity: 0.15;
   filter: blur(0.5px) grayscale(100%) brightness(200%);
   pointer-events: none;
-
+  z-index: 0;
 }
 
 .court-card-content {
   position: relative;
-  z-index: 20;
+  z-index: 1;
 }
 
 /* ─── Score Picker ───────────────────────────────────────── */

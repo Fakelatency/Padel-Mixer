@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import { calculateStandings } from '@/lib/scoring';
 import { isScoreValid } from '@/lib/scoring';
 import { Match, PlayerStats } from '@/lib/types';
+import { sortStandings } from '@/lib/scheduler';
 
 type Tab = 'matches' | 'leaderboard' | 'stats';
 type SortMode = 'points' | 'wins';
@@ -23,6 +24,12 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     const [sortMode, setSortMode] = useState<SortMode>('points');
     const [showFinalConfirm, setShowFinalConfirm] = useState(false);
     const [isFinalRound, setIsFinalRound] = useState(false);
+
+    useEffect(() => {
+        if (currentTournament?.rankingStrategy) {
+            setSortMode(currentTournament.rankingStrategy);
+        }
+    }, [currentTournament?.rankingStrategy]);
 
     useEffect(() => {
         loadTournamentById(id);
@@ -43,17 +50,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     const standings = calculateStandings(tournament);
 
     // Sort standings based on selected mode
-    const sortedStandings = [...standings].sort((a, b) => {
-        if (sortMode === 'wins') {
-            if (b.matchesWon !== a.matchesWon) return b.matchesWon - a.matchesWon;
-            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-            return b.pointDifference - a.pointDifference;
-        }
-        // Default: by points
-        if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-        if (b.pointDifference !== a.pointDifference) return b.pointDifference - a.pointDifference;
-        return b.matchesWon - a.matchesWon;
-    });
+    const sortedStandings = sortStandings(standings, sortMode);
 
     const currentRound = tournament.rounds[tournament.currentRound - 1];
     const isCurrentRoundComplete = currentRound?.matches.every(

@@ -3,11 +3,15 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { headers } from 'next/headers';
 
-async function getUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    return session?.user ?? null;
+async function getUser() {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+        return session?.user ?? null;
+    } catch {
+        return null;
+    }
 }
 
 export async function GET(
@@ -15,13 +19,9 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const user = await getUser(req);
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const tournament = await prisma.tournament.findFirst({
-        where: { id, userId: user.id },
+        where: { id },
     });
 
     if (!tournament) {
@@ -36,21 +36,23 @@ export async function PUT(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const user = await getUser(req);
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await req.json();
     const tournamentData = body as Record<string, unknown>;
 
-    // Verify ownership
     const existing = await prisma.tournament.findFirst({
-        where: { id, userId: user.id },
+        where: { id },
     });
 
     if (!existing) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    // If tournament has an owner, verify ownership
+    if (existing.userId) {
+        const user = await getUser();
+        if (!user || user.id !== existing.userId) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
     }
 
     const updated = await prisma.tournament.update({
@@ -70,18 +72,21 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const user = await getUser(req);
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
-    // Verify ownership
     const existing = await prisma.tournament.findFirst({
-        where: { id, userId: user.id },
+        where: { id },
     });
 
     if (!existing) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    // If tournament has an owner, verify ownership
+    if (existing.userId) {
+        const user = await getUser();
+        if (!user || user.id !== existing.userId) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
     }
 
     await prisma.tournament.delete({ where: { id } });

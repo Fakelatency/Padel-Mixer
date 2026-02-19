@@ -1,6 +1,6 @@
 # Padel Mixer
 
-A client-side web application for organizing and managing padel tournaments. Supports multiple tournament formats, live score tracking, leaderboards, and shareable results -- all without a backend server.
+A client-side web application for organizing and managing padel tournaments. Supports multiple tournament formats, live score tracking, leaderboards, fixed round limits, custom ranking strategies, and shareable results -- all without a backend server.
 
 ---
 
@@ -21,13 +21,15 @@ A client-side web application for organizing and managing padel tournaments. Sup
 
 - **Multiple tournament formats** -- Americano, Mixed Americano, Team Americano, Mexicano, and Team Mexicano.
 - **Configurable scoring** -- choose between 16, 21, 24, or 32 point scoring systems.
+- **Flexible Round Limits** -- Set a fixed number of rounds or play unlimited rounds.
+- **Custom Ranking Strategy** -- Choose to rank players primarily by **Points** or by **Wins**.
 - **Multi-court support** -- run matches on multiple courts in parallel.
-- **Live score entry** -- enter scores in real time during matches.
+- **Live score entry** -- enter scores in real time during matches using a specialized court-card interface.
 - **Automatic scheduling** -- matches and pairings are generated automatically based on the selected format.
-- **Dynamic standings** -- leaderboard updates after each completed match.
+- **Dynamic standings** -- leaderboard updates instantly after each completed match.
 - **Shareable results** -- generate a URL to share final tournament results with anyone; no account or login required.
 - **Offline-first** -- all data is stored in the browser via localStorage. No server, no database.
-- **Trilingual** -- supports Polish (default), English, and German, switchable at any time.
+- **Quadrilingual** -- supports Polish (default), English, German, and Ukrainian, switchable at any time.
 
 ---
 
@@ -107,7 +109,12 @@ A client-side web application for organizing and managing padel tournaments. Sup
 1. Open the app and click **New Tournament** on the home page.
 2. **Choose a format** -- select one of the five tournament formats.
 3. **Add players** -- enter player names one by one. For Mixed Americano, assign a gender (male/female) to each player. For Team formats, create teams and assign players to them.
-4. **Configure settings** -- set the tournament name, number of courts, and scoring system (16, 21, 24, or 32 points per match).
+4. **Configure settings**:
+    - **Tournament Name**: Give your event a name.
+    - **Courts**: Select the number of courts available.
+    - **Scoring System**: Choose 16, 21, 24, or 32 points per match.
+    - **Round Mode**: Choose between **Unlimited** (play until you stop) or **Fixed** (set a specific number of rounds).
+    - **Ranking Priority**: Choose whether to rank players by **Total Points** or **Matches Won** first.
 5. **Review and start** -- verify the setup on the summary screen and start the tournament.
 
 ### Running Matches
@@ -120,7 +127,9 @@ A client-side web application for organizing and managing padel tournaments. Sup
 ### Viewing Standings
 
 - The leaderboard is visible during the tournament and updates automatically.
-- Players are ranked by total points, then by point difference, then by number of wins.
+- Sorting logic depends on the chosen **Ranking Priority**:
+    - **By Points**: Total Points -> Point Difference -> Matches Won.
+    - **By Wins**: Matches Won -> Total Points -> Point Difference.
 - For team formats, team standings are shown alongside individual stats.
 
 ### Finishing a Tournament
@@ -134,7 +143,7 @@ A client-side web application for organizing and managing padel tournaments. Sup
 
 ### Switching Language
 
-- Use the language toggle in the header to switch between Polish, English, and German at any time. The preference is saved in the browser.
+- Use the language toggle in the header to switch between Polish (PL), English (EN), German (DE), and Ukrainian (UA) at any time. The preference is saved in the browser.
 
 ### Managing Tournaments
 
@@ -171,7 +180,7 @@ src/
     scoring.ts                -- Scoring engine and standings calculation
     share.ts                  -- URL-based result sharing (encode/decode)
     storage.ts                -- localStorage persistence layer
-    i18n.ts                   -- Translations (Polish, English, and German)
+    i18n.ts                   -- Translations (PL, EN, DE, UA)
 ```
 
 ---
@@ -179,34 +188,36 @@ src/
 
 # Padel Mixer (PL)
 
-Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele formatow turniejowych, sledzenie wynikow na zywo, tabele wynikow oraz udostepnianie rezultatow -- wszystko bez serwera backendowego.
+Aplikacja webowa do organizacji i prowadzenia turniejów padel. Obsługuje wiele formatów turniejowych, śledzenie wyników na żywo, konfigurowalne limity rund, strategie rankingu i udostępnianie rezultatów -- wszystko bez serwera backendowego.
 
 ---
 
-## Spis tresci
+## Spis treści
 
 - [Funkcje](#funkcje)
 - [Formaty turniejowe](#formaty-turniejowe)
 - [Stos technologiczny](#stos-technologiczny)
-- [Wymagania wstepne](#wymagania-wstepne)
+- [Wymagania wstępne](#wymagania-wstepne)
 - [Uruchomienie projektu](#uruchomienie-projektu)
-- [Dostepne skrypty](#dostepne-skrypty)
-- [Jak uzywac](#jak-uzywac)
+- [Dostępne skrypty](#dostepne-skrypty)
+- [Jak używać](#jak-uzywac)
 - [Struktura projektu](#struktura-projektu-1)
 
 ---
 
 ## Funkcje
 
-- **Wiele formatow turniejowych** -- Americano, Mixed Americano, Team Americano, Mexicano i Team Mexicano.
+- **Wiele formatów turniejowych** -- Americano, Mixed Americano, Team Americano, Mexicano i Team Mexicano.
 - **Konfigurowalny system punktacji** -- do wyboru: 16, 21, 24 lub 32 punkty na mecz.
-- **Obsluga wielu kortow** -- mecze rozgrywane rownolegle na kilku kortach.
-- **Wprowadzanie wynikow na zywo** -- wpisywanie wynikow w trakcie trwania meczy.
+- **Elastyczny limit rund** -- Wybór między stałą liczbą rund a grą nielimitowaną.
+- **Własna strategia rankingu** -- Możliwość sortowania tabeli priorytetowo wg **Punktów** lub **Zwycięstw**.
+- **Obsługa wielu kortów** -- mecze rozgrywane równolegle na kilku kortach.
+- **Wprowadzanie wyników na żywo** -- wpisywanie wyników w trakcie trwania meczy za pomocą intuicyjnego interfejsu kortu.
 - **Automatyczne planowanie meczy** -- pary i mecze generowane automatycznie na podstawie wybranego formatu.
-- **Dynamiczna tabela wynikow** -- klasyfikacja aktualizuje sie po kazdym zakonczonym meczu.
-- **Udostepnianie wynikow** -- generowanie linku URL do udostepnienia wynikow turnieju dowolnej osobie; bez konta i logowania.
-- **Tryb offline** -- wszystkie dane przechowywane w przegladarce (localStorage). Bez serwera, bez bazy danych.
-- **Trojjezycznosc** -- obsluga jezyka polskiego (domyslny), angielskiego i niemieckiego, przelaczanie w dowolnym momencie.
+- **Dynamiczna tabela wyników** -- klasyfikacja aktualizuje się natychmiast po każdym zakończeniu meczu.
+- **Udostępnianie wyników** -- generowanie linku URL do udostępnienia wyników turnieju dowolnej osobie; bez konta i logowania.
+- **Tryb offline** -- wszystkie dane przechowywane w przeglądarce (localStorage). Bez serwera, bez bazy danych.
+- **Czterojęzyczność** -- obsługa języka polskiego (domyślny), angielskiego, niemieckiego i ukraińskiego, przełączanie w dowolnym momencie.
 
 ---
 
@@ -214,11 +225,11 @@ Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele f
 
 | Format           | Opis                                                                                                 |
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
-| Americano        | Klasyczny round-robin. Kazdy gracz gra w parze z kazdym innym i przeciwko kazdemu innemu.           |
-| Mixed Americano  | Jak Americano, ale kazda para sklada sie z jednego mezczyzny i jednej kobiety.                      |
-| Team Americano   | Stale druzyny graja kazda z kazda w systemie round-robin.                                            |
+| Americano        | Klasyczny round-robin. Każdy gracz gra w parze z każdym innym i przeciwko każdemu innemu.           |
+| Mixed Americano  | Jak Americano, ale każda para składa się z jednego mężczyzny i jednej kobiety.                      |
+| Team Americano   | Stałe drużyny grają każda z każdą w systemie round-robin.                                            |
 | Mexicano         | Dynamiczne parowanie na podstawie aktualnej klasyfikacji. Pierwsza runda losowa, kolejne rankingowe. |
-| Team Mexicano    | Stale druzyny z dynamicznym doborem przeciwnikow na podstawie klasyfikacji druzynowej.               |
+| Team Mexicano    | Stałe drużyny z dynamicznym doborem przeciwników na podstawie klasyfikacji drużynowej.               |
 
 ---
 
@@ -227,16 +238,16 @@ Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele f
 | Warstwa               | Technologia                 |
 | --------------------- | --------------------------- |
 | Framework             | Next.js 16                  |
-| Jezyk programowania   | TypeScript 5                |
+| Język programowania   | TypeScript 5                |
 | Biblioteka UI         | React 19                    |
 | Stylowanie            | Tailwind CSS 4              |
-| Zarzadzanie stanem    | React Context + useReducer  |
-| Przechowywanie danych | localStorage przegladarki   |
+| Zarządzanie stanem    | React Context + useReducer  |
+| Przechowywanie danych | localStorage przeglądarki   |
 | Linting               | ESLint 9                    |
 
 ---
 
-## Wymagania wstepne
+## Wymagania wstępne
 
 - **Node.js** -- wersja 18 lub nowsza.
 - **npm** -- instalowany razem z Node.js.
@@ -252,7 +263,7 @@ Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele f
    cd Padel-Mixer
    ```
 
-2. **Zainstaluj zaleznosci**
+2. **Zainstaluj zależności**
 
    ```bash
    npm install
@@ -264,62 +275,69 @@ Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele f
    npm run dev
    ```
 
-4. **Otworz aplikacje** w przegladarce pod adresem `http://localhost:3000`.
+4. **Otwórz aplikację** w przeglądarce pod adresem `http://localhost:3000`.
 
 ---
 
-## Dostepne skrypty
+## Dostępne skrypty
 
 | Polecenie        | Opis                                                    |
 | ---------------- | ------------------------------------------------------- |
-| `npm run dev`    | Uruchamia serwer deweloperski z automatycznym odswiezaniem. |
-| `npm run build`  | Tworzy zoptymalizowana wersje produkcyjna.              |
-| `npm run start`  | Serwuje wersje produkcyjna lokalnie.                    |
+| `npm run dev`    | Uruchamia serwer deweloperski z automatycznym odświeżaniem. |
+| `npm run build`  | Tworzy zoptymalizowaną wersję produkcyjną.              |
+| `npm run start`  | Serwuje wersję produkcyjną lokalnie.                    |
 | `npm run lint`   | Uruchamia ESLint w celu sprawdzenia kodu.               |
 
 ---
 
-## Jak uzywac
+## Jak używać
 
 ### Tworzenie turnieju
 
-1. Otworz aplikacje i kliknij **Nowy turniej** na stronie glownej.
-2. **Wybierz format** -- wybierz jeden z pieciu formatow turniejowych.
-3. **Dodaj graczy** -- wpisuj imiona graczy po kolei. W przypadku Mixed Americano przypisz plec (mezczyzna/kobieta) kazdemu graczowi. W formatach druzynowych utworz druzyny i przypisz do nich graczy.
-4. **Skonfiguruj ustawienia** -- ustaw nazwe turnieju, liczbe kortow i system punktacji (16, 21, 24 lub 32 punkty na mecz).
-5. **Przejrzyj i rozpocznij** -- sprawdz podsumowanie konfiguracji i rozpocznij turniej.
+1. Otwórz aplikację i kliknij **Nowy turniej** na stronie głównej.
+2. **Wybierz format** -- wybierz jeden z pięciu formatów turniejowych.
+3. **Dodaj graczy** -- wpisuj imiona graczy po kolei. W przypadku Mixed Americano przypisz płeć (mężczyzna/kobieta) każdemu graczowi. W formatach drużynowych utwórz drużyny i przypisz do nich graczy.
+4. **Skonfiguruj ustawienia**:
+    - **Nazwa turnieju**: Podaj nazwę wydarzenia.
+    - **Liczba kortów**: Wybierz liczbę dostępnych kortów.
+    - **System punktacji**: 16, 21, 24 lub 32 punkty na mecz.
+    - **Tryb rund**: Wybierz **Nielimitowane** (gra do oporu) lub **Określona liczba** (ustal sztywny limit rund).
+    - **Priorytet Rankingu**: Wybierz, czy w tabeli ważniejsze są **Punkty** czy liczba **Zwycięstw**.
+5. **Przejrzyj i rozpocznij** -- sprawdź podsumowanie konfiguracji i rozpocznij turniej.
 
 ### Prowadzenie meczy
 
-- Aplikacja wyswietla biezaca runde ze wszystkimi meczami i przypisanymi kortami.
-- Gracze pauzujacy w danej rundzie (jezeli jest wiecej graczy niz miejsc na kortach) sa wyswietlani osobno.
-- Wprowadz wynik kazdego meczu. Suma obu wynikow musi byc rowna wartosci systemu punktacji (np. przy systemie 24 poprawne wyniki to 14-10, 12-12 itp.).
-- Po zakonczeniu wszystkich meczy w rundzie przejdz do nastepnej rundy.
+- Aplikacja wyświetla bieżącą rundę ze wszystkimi meczami i przypisanymi kortami.
+- Gracze pauzujący w danej rundzie (jeżeli jest więcej graczy niż miejsc na kortach) są wyświetlani osobno.
+- Wprowadź wynik każdego meczu. Suma obu wyników musi być równa wartości systemu punktacji (np. przy systemie 24 poprawne wyniki to 14-10, 12-12 itp.).
+- Po zakończeniu wszystkich meczy w rundzie przejdź do następnej rundy.
 
-### Przegladanie klasyfikacji
+### Przeglądanie klasyfikacji
 
-- Tabela wynikow jest widoczna w trakcie turnieju i aktualizuje sie automatycznie.
-- Gracze sa klasyfikowani wedlug sumy punktow, nastepnie roznicy punktow, a potem liczby zwycieztw.
-- W formatach druzynowych klasyfikacja druzynowa wyswietlana jest obok statystyk indywidualnych.
+- Tabela wyników jest widoczna w trakcie turnieju i aktualizuje się automatycznie.
+- Logika sortowania zależy od wybranego **Priorytetu Rankingu**:
+    - **Wg Punktów**: Suma Punktów -> Różnica Punktów -> Wygrane Mecze.
+    - **Wg Wygranych**: Wygrane Mecze -> Suma Punktów -> Różnica Punktów.
+- W formatach drużynowych klasyfikacja drużynowa wyświetlana jest obok statystyk indywidualnych.
 
-### Zakonczenie turnieju
+### Zakończenie turnieju
 
-- Po ostatniej rundzie zakoncz turniej, aby zablokowac wyniki i wyswietlic koncowa klasyfikacje.
+- Po ostatniej rundzie zakończ turniej, aby zablokować wyniki i wyświetlić końcową klasyfikację.
 
-### Udostepnianie wynikow
+### Udostępnianie wyników
 
-- Po zakonczeniu turnieju uzyj przycisku **Udostepnij**, aby wygenerowac link URL.
-- Kazdy, kto otworzy link, zobaczy pelne wyniki -- klasyfikacje, wyniki runda po rundzie i szczegoly meczy -- bez potrzeby instalacji aplikacji czy posiadania konta.
+- Po zakończeniu turnieju użyj przycisku **Udostępnij**, aby wygenerować link URL.
+- Każdy, kto otworzy link, zobaczy pełne wyniki -- klasyfikację, wyniki runda po rundzie i szczegóły meczy -- bez potrzeby instalacji aplikacji czy posiadania konta.
 
-### Zmiana jezyka
+### Zmiana języka
 
-- Uzyj przelacznika jezyka w naglowku, aby przelaczac miedzy polskim, angielskim i niemieckim w dowolnym momencie. Preferencja jest zapisywana w przegladarce.
+- Użyj przełącznika języka w nagłówku, aby przełączać między polskim (PL), angielskim (EN), niemieckim (DE) i ukraińskim (UA) w dowolnym momencie. Preferencja jest zapisywana w przeglądarce.
 
-### Zarzadzanie turniejami
+### Zarządzanie turniejami
 
-- Zapisane turnieje sa wyswietlane na stronie glownej, posortowane wedlug ostatniej aktualizacji.
-- Aktywne turnieje mozna kontynuowac od miejsca, w ktorym zostaly przerwane.
-- Turnieje mozna usuwac z listy na stronie glownej.
+- Zapisane turnieje są wyświetlane na stronie głównej, posortowane według ostatniej aktualizacji.
+- Aktywne turnieje można kontynuować od miejsca, w którym zostały przerwane.
+- Turnieje można usuwać z listy na stronie głównej.
 
 ---
 
@@ -328,27 +346,27 @@ Aplikacja webowa do organizacji i prowadzenia turniejow padel. Obsluguje wiele f
 ```
 src/
   app/
-    page.tsx                  -- Strona glowna (lista turniejow)
-    layout.tsx                -- Glowny uklad z metadanymi i providerami
+    page.tsx                  -- Strona główna (lista turniejów)
+    layout.tsx                -- Główny układ z metadanymi i providerami
     globals.css               -- Globalne style i tokeny designu
     results/
-      page.tsx                -- Podglad udostepnionych wynikow (dostep przez URL)
+      page.tsx                -- Podgląd udostępnionych wyników (dostęp przez URL)
     tournament/
       new/
         page.tsx              -- Kreator tworzenia turnieju (4 kroki)
       [id]/
         page.tsx              -- Widok aktywnego turnieju (mecze, wyniki, klasyfikacja)
         results/
-          page.tsx            -- Strona wynikow turnieju
+          page.tsx            -- Strona wyników turnieju
   components/
-    Header.tsx                -- Naglowek aplikacji z logo i przelacznikiem jezyka
+    Header.tsx                -- Nagłówek aplikacji z logo i przełącznikiem języka
   context/
     AppContext.tsx             -- Globalny stan (React Context + useReducer)
   lib/
-    types.ts                  -- Definicje typow TypeScript
+    types.ts                  -- Definicje typów TypeScript
     scheduler.ts              -- Algorytmy planowania meczy i parowania graczy
     scoring.ts                -- Silnik punktacji i obliczanie klasyfikacji
-    share.ts                  -- Udostepnianie wynikow przez URL (kodowanie/dekodowanie)
+    share.ts                  -- Udostępnianie wyników przez URL (kodowanie/dekodowanie)
     storage.ts                -- Warstwa persystencji localStorage
-    i18n.ts                   -- Tlumaczenia (polski, angielski i niemiecki)
+    i18n.ts                   -- Tłumaczenia (PL, EN, DE, UA)
 ```

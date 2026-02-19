@@ -66,8 +66,8 @@ model verification {
 
 model tournament {
   id        String   @id @default(cuid())
-  userId    String
-  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      user?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name      String
   status    String   @default("active")
   data      String   // JSON blob of the full Tournament object

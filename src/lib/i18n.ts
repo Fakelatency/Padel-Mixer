@@ -2,7 +2,7 @@
 // i18n — Polish (default), English & German
 // ==========================================
 
-export type Locale = 'pl' | 'en' | 'de';
+export type Locale = 'pl' | 'en' | 'de' | 'ua';
 
 export interface Translations {
     // General
@@ -125,6 +125,13 @@ export interface Translations {
     roundModeFixed: string;
     roundModeUnlimited: string;
     byePoints: string;
+    numberOfRounds: string;
+
+    // Priority
+    rankingPriority: string;
+    rankingPriorityDesc: string;
+    priorityWins: string;
+    priorityLabel: string;
 
     // Search & pagination
     searchTournaments: string;
@@ -260,6 +267,12 @@ const pl: Translations = {
     roundModeFixed: 'Określona liczba',
     roundModeUnlimited: 'Nielimitowane',
     byePoints: '+11 pkt za pauzę',
+    numberOfRounds: 'Liczba rund',
+
+    rankingPriority: 'Priorytet rankingu i parowania',
+    rankingPriorityDesc: 'Decyduje o kolejności w tabeli i parowaniu w Mexicano.',
+    priorityWins: 'Wygrane',
+    priorityLabel: 'Priorytet',
     searchTournaments: 'Szukaj turnieju...',
     filterAll: 'Wszystkie',
     filterActive: 'Aktywne',
@@ -392,6 +405,12 @@ const en: Translations = {
     roundModeFixed: 'Fixed rounds',
     roundModeUnlimited: 'Unlimited',
     byePoints: '+11 pts bye',
+    numberOfRounds: 'Number of rounds',
+
+    rankingPriority: 'Ranking & Pairing Priority',
+    rankingPriorityDesc: 'Determines how leaderboard is sorted and how matches are paired in Mexicano.',
+    priorityWins: 'Wins',
+    priorityLabel: 'Priority',
     searchTournaments: 'Search tournaments...',
     filterAll: 'All',
     filterActive: 'Active',
@@ -524,6 +543,12 @@ const de: Translations = {
     roundModeFixed: 'Feste Runden',
     roundModeUnlimited: 'Unbegrenzt',
     byePoints: '+11 Pkt Freilos',
+    numberOfRounds: 'Anzahl der Runden',
+
+    rankingPriority: 'Ranglisten- & Paarungspriorität',
+    rankingPriorityDesc: 'Bestimmt die Sortierung der Rangliste und die Paarungen im Mexicano.',
+    priorityWins: 'Siege',
+    priorityLabel: 'Priorität',
     searchTournaments: 'Turnier suchen...',
     filterAll: 'Alle',
     filterActive: 'Aktiv',
@@ -547,7 +572,147 @@ const de: Translations = {
     hasAccount: 'Bereits ein Konto?',
 };
 
-export const translations: Record<Locale, Translations> = { pl, en, de };
+const ua: Translations = {
+    appName: 'Baza Padel Tournament',
+    newTournament: 'Новий турнір',
+    continueTournament: 'Продовжити',
+    deleteTournament: 'Видалити турнір',
+    noTournaments: 'Немає збережених турнірів. Створіть свій перший турнір!',
+    savedTournaments: 'Збережені турніри',
+    backToHome: 'Головна',
+    language: 'Мова',
+
+    formatAmericano: 'Американо',
+    formatMixedAmericano: 'Змішане Американо',
+    formatTeamAmericano: 'Командне Американо',
+    formatMexicano: 'Мексикано',
+    formatTeamMexicano: 'Командне Мексикано',
+    formatAmericanoDesc: 'Класичний формат — кожен грає з кожним по колу. Індивідуальний залік.',
+    formatMixedAmericanoDesc: 'Пари завжди складаються з чоловіка та жінки. Індивідуальний залік.',
+    formatTeamAmericanoDesc: 'Постійні команди з 2 гравців. Командний залік.',
+    formatMexicanoDesc: 'Динамічні пари на основі рейтингу. Чим краще граєш, тим сильніші суперники.',
+    formatTeamMexicanoDesc: 'Постійні команди — матчі на основі поточного рейтингу команд.',
+
+    setupTitle: 'Налаштування турніру',
+    stepFormat: 'Формат',
+    stepPlayers: 'Гравці',
+    stepSettings: 'Налаштування',
+    stepReview: 'Огляд',
+    selectFormat: 'Виберіть формат турніру',
+    addPlayers: 'Додати гравців',
+    playerName: 'Ім\'я гравця',
+    addPlayer: 'Додати гравця',
+    removePlayer: 'Видалити',
+    tournamentName: 'Назва турніру',
+    numberOfCourts: 'Кількість кортів',
+    scoringSystem: 'Система очок',
+    pointsPerMatch: 'очок за матч',
+    startTournament: 'Почати турнір',
+    next: 'Далі',
+    back: 'Назад',
+    review: 'Огляд',
+    players: 'Гравці',
+    courts: 'Корти',
+    format: 'Формат',
+    gender: 'Стать',
+    male: 'Чоловік',
+    female: 'Жінка',
+    teamName: 'Назва команди',
+    addTeam: 'Додати команду',
+    assignToTeam: 'Призначити в команду',
+
+    matches: 'Матчі',
+    leaderboard: 'Таблиця',
+    stats: 'Статистика',
+    round: 'Раунд',
+    currentRound: 'Поточний раунд',
+    court: 'Корт',
+    vs: 'проти',
+    score: 'Рахунок',
+    enterScore: 'Введіть рахунок',
+    saveScore: 'Зберегти рахунок',
+    nextRound: 'Наступний раунд',
+    finishTournament: 'Завершити турнір',
+    sittingOut: 'Відпочивають',
+    allMatchesCompleted: 'Всі матчі завершено',
+    enterAllScores: 'Введіть рахунки всіх матчів, щоб продовжити',
+    roundOf: 'з',
+
+    position: 'Поз.',
+    player: 'Гравець',
+    points: 'Очки',
+    played: 'Зіграно',
+    won: 'Виграно',
+    lost: 'Програно',
+    diff: '+/-',
+
+    results: 'Результати',
+    tournamentResults: 'Результати турніру',
+    champion: 'Чемпіон',
+    podium: 'Подіум',
+    finalStandings: 'Підсумкова таблиця',
+    matchHistory: 'Історія матчів',
+    shareResults: 'Поділитися результатами',
+    linkCopied: 'Посилання скопійовано!',
+    shareDescription: 'Поділіться посиланням з результатами турніру',
+    pointsTotal: 'Всього очок',
+    matchesTotal: 'Всього матчів',
+
+    sortResults: 'Сортування',
+    sortByPoints: 'За очками',
+    sortByWins: 'За перемогами',
+    lastMatch: 'Останній матч',
+    lastMatchConfirm: 'Ви впевнені, що хочете зіграти останній матч?',
+    lastMatchWarning: 'Турнір завершиться після введення результатів.',
+    previousRounds: 'Попередні раунди',
+    repeatTournament: 'Повторити турнір',
+    repeatTournamentDesc: 'Створити новий турнір з тими ж налаштуваннями',
+
+    confirmDelete: 'Ви впевнені, що хочете видалити цей турнір?',
+    cancel: 'Скасувати',
+    confirm: 'Підтвердити',
+    close: 'Закрити',
+    error: 'Помилка',
+    success: 'Успіх',
+    warning: 'Увага',
+    minPlayersRequired: 'Мінімальна кількість гравців:',
+    evenPlayersRequired: 'Потрібна парна кількість гравців',
+    roundModeLabel: 'Режим раундів',
+    roundModeFixed: 'Фіксована кількість',
+    roundModeUnlimited: 'Безліміт',
+    byePoints: '+11 очок за пропуск',
+    numberOfRounds: 'Кількість раундів',
+
+    rankingPriority: 'Пріоритет рейтингу та пар',
+    rankingPriorityDesc: 'Визначає сортування таблиці та формування пар у Мексикано.',
+    priorityWins: 'Перемоги',
+    priorityLabel: 'Пріоритет',
+
+    searchTournaments: 'Пошук турніру...',
+    filterAll: 'Всі',
+    filterActive: 'Активні',
+    filterFinished: 'Завершені',
+    previousPage: 'Попередня',
+    nextPage: 'Наступна',
+    pageOf: 'з',
+
+    // Auth
+    login: 'Вхід',
+    loginSubtitle: 'Увійдіть, щоб керувати турнірами',
+    loginError: 'Невірний email або пароль',
+    loginLink: 'Увійти',
+    register: 'Реєстрація',
+    registerSubtitle: 'Створіть акаунт, щоб зберігати турніри',
+    registerError: 'Помилка реєстрації. Спробуйте ще раз.',
+    registerLink: 'Зареєструватися',
+    email: 'Email',
+    password: 'Пароль',
+    logout: 'Вийти',
+    noAccount: 'Немає акаунту?',
+    hasAccount: 'Вже є акаунт?',
+};
+
+export const translations: Record<Locale, Translations> = { pl, en, de, ua };
 
 export function getTranslations(locale: Locale): Translations {
     return translations[locale];

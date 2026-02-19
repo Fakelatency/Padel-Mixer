@@ -3,21 +3,23 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { headers } from 'next/headers';
 
-async function getUser(req: NextRequest) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    return session?.user ?? null;
+async function getUser() {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+        return session?.user ?? null;
+    } catch {
+        return null;
+    }
 }
 
-export async function GET(req: NextRequest) {
-    const user = await getUser(req);
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+export async function GET() {
+    const user = await getUser();
 
+    // If logged in, show user's tournaments; otherwise show all anonymous tournaments
     const tournaments = await prisma.tournament.findMany({
-        where: { userId: user.id },
+        where: user ? { userId: user.id } : { userId: null },
         orderBy: { updatedAt: 'desc' },
         select: {
             id: true,
@@ -38,18 +40,14 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const user = await getUser(req);
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const user = await getUser();
     const body = await req.json();
     const tournamentData = body as Record<string, unknown>;
 
     const tournament = await prisma.tournament.create({
         data: {
             id: tournamentData.id as string,
-            userId: user.id,
+            userId: user?.id ?? null,
             name: (tournamentData.name as string) || 'Unnamed',
             status: (tournamentData.status as string) || 'active',
             data: JSON.stringify(tournamentData),

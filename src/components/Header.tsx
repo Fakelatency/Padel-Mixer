@@ -60,9 +60,19 @@ export default function Header() {
                         >
                             DE
                         </button>
+                        <button
+                            onClick={() => setLocale('ua')}
+                            className={`relative px-3 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${locale === 'ua'
+                                ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/30'
+                                : 'text-navy-400 hover:text-navy-200'
+                                }`}
+                        >
+                            UA
+                        </button>
                     </div>
 
-                    {user && (
+
+                    {user ? (
                         <div className="flex items-center gap-2">
                             <span className="text-xs text-navy-300 hidden sm:inline">{user.name}</span>
                             <button
@@ -72,6 +82,13 @@ export default function Header() {
                                 {t.logout}
                             </button>
                         </div>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="px-3 py-1.5 rounded-full text-xs font-bold bg-navy-800/80 border border-navy-600/30 text-navy-400 hover:text-white transition-all"
+                        >
+                            {t.login}
+                        </Link>
                     )}
                 </div>
             </div>

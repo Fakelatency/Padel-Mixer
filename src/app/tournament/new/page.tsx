@@ -20,7 +20,7 @@ const FORMAT_OPTIONS: { value: TournamentFormat; icon: string }[] = [
 const SCORING_OPTIONS: ScoringSystem[] = [16, 21, 24, 32];
 
 export default function NewTournamentPage() {
-    const { t, dispatch } = useApp();
+    const { t, createTournament } = useApp();
     const router = useRouter();
 
     const [step, setStep] = useState<Step>('format');
@@ -33,7 +33,10 @@ export default function NewTournamentPage() {
     const [tournamentName, setTournamentName] = useState('');
     const [courts, setCourts] = useState(2);
     const [scoringSystem, setScoringSystem] = useState<ScoringSystem>(21);
+
     const [roundMode, setRoundMode] = useState<RoundMode>('unlimited');
+    const [totalRounds, setTotalRounds] = useState<number>(12);
+    const [rankingStrategy, setRankingStrategy] = useState<'points' | 'wins'>('points');
 
     // Pre-fill from repeat tournament settings
     useEffect(() => {
@@ -50,6 +53,8 @@ export default function NewTournamentPage() {
                     if (s.courts) setCourts(s.courts);
                     if (s.scoringSystem) setScoringSystem(s.scoringSystem);
                     if (s.roundMode) setRoundMode(s.roundMode);
+                    if (s.totalRounds) setTotalRounds(s.totalRounds);
+                    if (s.rankingStrategy) setRankingStrategy(s.rankingStrategy);
                     setStep('settings');
                     localStorage.removeItem('padel_repeat_settings');
                 }
@@ -182,28 +187,20 @@ export default function NewTournamentPage() {
         }
     };
 
-    const handleStart = () => {
-        dispatch({
-            type: 'CREATE_TOURNAMENT',
-            settings: {
-                name: tournamentName,
-                format,
-                scoringSystem,
-                courts,
-                players,
-                teams: isTeamFormat ? teams : [],
-                roundMode,
-            },
+    const handleStart = async () => {
+        const tournament = await createTournament({
+            name: tournamentName,
+            format,
+            scoringSystem,
+            courts,
+            players,
+            teams: isTeamFormat ? teams : [],
+
+            roundMode,
+            totalRounds: roundMode === 'fixed' ? totalRounds : null,
+            rankingStrategy,
         });
-        // Navigate to the active tournament (the latest one)
-        // We get it from state after dispatch
-        setTimeout(() => {
-            const stored = JSON.parse(localStorage.getItem('padel_tournaments') || '[]');
-            const latest = stored[stored.length - 1];
-            if (latest) {
-                router.push(`/tournament/${latest.id}`);
-            }
-        }, 100);
+        router.push(`/tournament/${tournament.id}`);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent, addFn: () => void) => {
@@ -510,8 +507,56 @@ export default function NewTournamentPage() {
                                         </button>
                                     </div>
                                 </div>
+
+                                {roundMode === 'fixed' && (
+                                    <div className="mt-4 animate-fade-in">
+                                        <label className="block text-sm font-medium text-navy-300 mb-2">
+                                            {t.numberOfRounds || 'Liczba rund'}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={50}
+                                            value={totalRounds}
+                                            onChange={(e) => setTotalRounds(parseInt(e.target.value) || 1)}
+                                            className="input"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="glass-card-static p-5">
+                                <div className="mb-3">
+                                    <label className="block text-sm font-medium text-navy-300">
+                                        {t.rankingPriority}
+                                    </label>
+                                    <p className="text-xs text-navy-400 mt-1">
+                                        {t.rankingPriorityDesc}
+                                    </p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setRankingStrategy('points')}
+                                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${rankingStrategy === 'points'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        {t.points}
+                                    </button>
+                                    <button
+                                        onClick={() => setRankingStrategy('wins')}
+                                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${rankingStrategy === 'wins'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        {t.priorityWins}
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
                     )}
 
                     {/* ── Review ── */}
@@ -543,7 +588,13 @@ export default function NewTournamentPage() {
                                 <div className="flex justify-between items-center py-2 border-t border-navy-700/50">
                                     <span className="text-navy-300">{t.roundModeLabel}</span>
                                     <span className="font-bold text-white">
-                                        {roundMode === 'unlimited' ? `∞ ${t.roundModeUnlimited}` : t.roundModeFixed}
+                                        {roundMode === 'unlimited' ? `∞ ${t.roundModeUnlimited}` : `${t.roundModeFixed} (${totalRounds})`}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center py-2 border-t border-navy-700/50">
+                                    <span className="text-navy-300">{t.rankingPriority}</span>
+                                    <span className="font-bold text-white">
+                                        {rankingStrategy === 'points' ? t.points : t.priorityWins}
                                     </span>
                                 </div>
 
@@ -610,7 +661,7 @@ export default function NewTournamentPage() {
                         </button>
                     )}
                 </div>
-            </main>
+            </main >
         </>
     );
 }

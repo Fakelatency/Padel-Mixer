@@ -4,7 +4,7 @@
 
 import { Tournament } from './types';
 
-const API_BASE = '/api/tournaments';
+const API_BASE = '/padel/api/tournaments';
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     const res = await fetch(url, {

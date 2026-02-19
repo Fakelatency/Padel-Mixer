@@ -62,7 +62,7 @@ body {
   transform: translate(-50%, -50%);
   width: 500px;
   height: 500px;
-  background: url('/logo.jpg') center/contain no-repeat;
+  background: url('/padel/logo.jpg') center/contain no-repeat;
   opacity: 0.03;
   filter: blur(1px);
 }
@@ -629,7 +629,7 @@ body {
   transform: translate(-50%, -50%);
   width: 120px;
   height: 120px;
-  background: url('/baza-padel-sygnet.png') center/contain no-repeat;
+  background: url('/padel/baza-padel-sygnet.png') center/contain no-repeat;
   opacity: 0.15;
   filter: blur(0.5px) grayscale(100%) brightness(200%);
   pointer-events: none;

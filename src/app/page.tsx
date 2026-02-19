@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Image from 'next/image';
+import logo from '../../public/baza-padel-logo.png';
 import { useState } from 'react';
 
 const formatIcons: Record<string, string> = {
@@ -80,7 +81,7 @@ export default function HomePage() {
         <div className="text-center mb-12 animate-fade-in">
           <div className="relative inline-block mb-6">
             <Image
-              src="/baza-padel-logo.png"
+              src={logo}
               alt="Baza Padel Club"
               width={280}
               height={80}

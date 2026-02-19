@@ -3,6 +3,7 @@
 import { useApp } from '@/context/AppContext';
 import { authClient } from '@/lib/auth-client';
 import Image from 'next/image';
+import logo from '../../public/baza-padel-logo.png';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -22,7 +23,7 @@ export default function Header() {
                 <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
                     <div className="h-8 sm:h-10 transition-transform group-hover:scale-105">
                         <Image
-                            src="/baza-padel-logo.png"
+                            src={logo}
                             alt="Baza Padel Club"
                             width={120}
                             height={32}

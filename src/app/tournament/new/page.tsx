@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
@@ -38,6 +38,13 @@ export default function NewTournamentPage() {
     const [totalRounds, setTotalRounds] = useState<number>(12);
     const [rankingStrategy, setRankingStrategy] = useState<'points' | 'wins'>('points');
 
+    // Guest / Member player mode
+    const [playerMode, setPlayerMode] = useState<'guest' | 'member'>('guest');
+    const [userSearch, setUserSearch] = useState('');
+    const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const searchTimer = useRef<NodeJS.Timeout | null>(null);
+
     // Pre-fill from repeat tournament settings
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -64,6 +71,28 @@ export default function NewTournamentPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Debounced user search
+    useEffect(() => {
+        if (playerMode !== 'member' || userSearch.length < 1) {
+            setSearchResults([]);
+            return;
+        }
+        setSearchLoading(true);
+        if (searchTimer.current) clearTimeout(searchTimer.current);
+        searchTimer.current = setTimeout(async () => {
+            try {
+                const res = await fetch(`/padel/api/users/search?q=${encodeURIComponent(userSearch)}`);
+                const data = await res.json();
+                setSearchResults(data.users || []);
+            } catch {
+                setSearchResults([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 300);
+        return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+    }, [userSearch, playerMode]);
 
     const isTeamFormat = format === 'teamAmericano' || format === 'teamMexicano';
     const isMixedFormat = format === 'mixedAmericano';
@@ -109,6 +138,19 @@ export default function NewTournamentPage() {
         };
         setPlayers([...players, player]);
         setNewPlayerName('');
+    };
+
+    const addMemberPlayer = (user: { id: string; name: string }) => {
+        if (players.some((p) => p.linkedUserId === user.id)) return;
+        const player: Player = {
+            id: `p_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+            name: user.name,
+            gender: isMixedFormat ? newPlayerGender : undefined,
+            linkedUserId: user.id,
+        };
+        setPlayers([...players, player]);
+        setUserSearch('');
+        setSearchResults([]);
     };
 
     const removePlayer = (id: string) => {
@@ -291,32 +333,114 @@ export default function NewTournamentPage() {
                         <div>
                             <h2 className="text-2xl font-bold mb-6 text-center">{t.addPlayers}</h2>
 
-                            {/* Add Player Form */}
+                            {/* Add Player Form — Guest / Member tabs */}
                             <div className="glass-card-static p-4 mb-6">
-                                <div className="flex gap-3">
-                                    <input
-                                        type="text"
-                                        value={newPlayerName}
-                                        onChange={(e) => setNewPlayerName(e.target.value)}
-                                        onKeyDown={(e) => handleKeyDown(e, addPlayer)}
-                                        placeholder={t.playerName}
-                                        className="input flex-1"
-                                        autoFocus
-                                    />
-                                    {isMixedFormat && (
-                                        <select
-                                            value={newPlayerGender}
-                                            onChange={(e) => setNewPlayerGender(e.target.value as Gender)}
-                                            className="input w-36"
-                                        >
-                                            <option value="male">♂ {t.male}</option>
-                                            <option value="female">♀ {t.female}</option>
-                                        </select>
-                                    )}
-                                    <button onClick={addPlayer} className="btn-primary whitespace-nowrap">
-                                        + {t.addPlayer}
+                                {/* Tab toggle */}
+                                <div className="flex gap-2 mb-4">
+                                    <button
+                                        onClick={() => setPlayerMode('guest')}
+                                        className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${playerMode === 'guest'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        👤 {t.addGuest}
+                                    </button>
+                                    <button
+                                        onClick={() => setPlayerMode('member')}
+                                        className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${playerMode === 'member'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        🔍 {t.addMember}
                                     </button>
                                 </div>
+
+                                {/* Guest mode — current text input */}
+                                {playerMode === 'guest' && (
+                                    <div className="flex gap-3">
+                                        <input
+                                            type="text"
+                                            value={newPlayerName}
+                                            onChange={(e) => setNewPlayerName(e.target.value)}
+                                            onKeyDown={(e) => handleKeyDown(e, addPlayer)}
+                                            placeholder={t.playerName}
+                                            className="input flex-1"
+                                            autoFocus
+                                        />
+                                        {isMixedFormat && (
+                                            <select
+                                                value={newPlayerGender}
+                                                onChange={(e) => setNewPlayerGender(e.target.value as Gender)}
+                                                className="input w-36"
+                                            >
+                                                <option value="male">♂ {t.male}</option>
+                                                <option value="female">♀ {t.female}</option>
+                                            </select>
+                                        )}
+                                        <button onClick={addPlayer} className="btn-primary whitespace-nowrap">
+                                            + {t.addPlayer}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Member mode — search registered users */}
+                                {playerMode === 'member' && (
+                                    <div className="relative">
+                                        <div className="flex gap-3">
+                                            <input
+                                                type="text"
+                                                value={userSearch}
+                                                onChange={(e) => setUserSearch(e.target.value)}
+                                                placeholder={t.searchUsers}
+                                                className="input flex-1"
+                                                autoFocus
+                                            />
+                                            {isMixedFormat && (
+                                                <select
+                                                    value={newPlayerGender}
+                                                    onChange={(e) => setNewPlayerGender(e.target.value as Gender)}
+                                                    className="input w-36"
+                                                >
+                                                    <option value="male">♂ {t.male}</option>
+                                                    <option value="female">♀ {t.female}</option>
+                                                </select>
+                                            )}
+                                        </div>
+                                        {/* Search results dropdown */}
+                                        {userSearch.length >= 1 && (
+                                            <div className="absolute left-0 right-0 top-full mt-2 bg-navy-800 border border-navy-600/50 rounded-xl shadow-2xl shadow-black/40 z-10 max-h-60 overflow-y-auto">
+                                                {searchLoading ? (
+                                                    <div className="p-4 text-center text-navy-400 text-sm">...</div>
+                                                ) : searchResults.length === 0 ? (
+                                                    <div className="p-4 text-center text-navy-400 text-sm">{t.noUsersFound}</div>
+                                                ) : (
+                                                    searchResults.map((u) => {
+                                                        const alreadyAdded = players.some((p) => p.linkedUserId === u.id);
+                                                        return (
+                                                            <button
+                                                                key={u.id}
+                                                                disabled={alreadyAdded}
+                                                                onClick={() => addMemberPlayer(u)}
+                                                                className={`w-full px-4 py-3 flex items-center gap-3 text-left transition-all border-b border-navy-700/30 last:border-0 ${alreadyAdded
+                                                                    ? 'opacity-40 cursor-not-allowed'
+                                                                    : 'hover:bg-navy-700/60 cursor-pointer'
+                                                                    }`}
+                                                            >
+                                                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold-400/80 to-gold-600/80 flex items-center justify-center text-sm font-black text-navy-950 shrink-0">
+                                                                    {u.name.charAt(0).toUpperCase()}
+                                                                </div>
+                                                                <span className="font-medium text-white">{u.name}</span>
+                                                                {alreadyAdded && <span className="ml-auto text-xs text-navy-500">✓</span>}
+                                                            </button>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Player List */}
@@ -332,6 +456,9 @@ export default function NewTournamentPage() {
                                                 {idx + 1}
                                             </div>
                                             <span className="font-medium text-white">{player.name}</span>
+                                            {player.linkedUserId && (
+                                                <span className="ml-1 px-1.5 py-0.5 rounded-md bg-gold-500/20 text-gold-400 text-[10px] font-bold">✓</span>
+                                            )}
                                             {isMixedFormat && (
                                                 <span className="text-sm text-navy-300">
                                                     {player.gender === 'male' ? '♂' : '♀'}

@@ -22,6 +22,7 @@ export interface Player {
     name: string;
     gender?: Gender;
     teamId?: string;
+    linkedUserId?: string;
 }
 
 export interface Team {

@@ -45,6 +45,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     // This effect must be here (before any return) to follow Rules of Hooks
     useEffect(() => {
         if (!currentTournament) return;
+        if (currentTournament.status === 'finished') return;
 
         if (isFinalRound && isCurrentRoundCompleteSafe) {
             finishTournament();
@@ -431,7 +432,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                             </div>
                         </div>
 
-                        <div className="glass-card-static overflow-hidden">
+                        <div className="glass-card-static overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-navy-700/50">

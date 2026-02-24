@@ -250,11 +250,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // ─── Tournament Actions (async) ─────────────────────────
 
     const createTournament = useCallback(async (settings: TournamentSettings): Promise<Tournament> => {
+        // Auto-link logged-in user to matching player by name
+        if (state.user) {
+            const userName = state.user.name.toLowerCase().trim();
+            settings = {
+                ...settings,
+                players: settings.players.map((p) => {
+                    if (p.name.toLowerCase().trim() === userName) {
+                        return { ...p, linkedUserId: state.user!.id };
+                    }
+                    return p;
+                }),
+            };
+        }
         const tournament = createTournamentData(settings);
         await apiSaveTournament(tournament);
         dispatch({ type: 'SET_TOURNAMENT_CREATED', tournament });
         return tournament;
-    }, []);
+    }, [state.user]);
 
     const updateScore = useCallback((matchId: string, score1: number, score2: number) => {
         if (!state.currentTournament) return;

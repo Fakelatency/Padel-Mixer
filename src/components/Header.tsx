@@ -75,7 +75,15 @@ export default function Header() {
 
                     {user ? (
                         <div className="flex items-center gap-2">
-                            <span className="text-xs text-navy-300 hidden sm:inline">{user.name}</span>
+                            <Link
+                                href="/profile"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gold-500/10 border border-gold-500/20 text-gold-400 hover:bg-gold-500/20 transition-all"
+                            >
+                                <span className="w-5 h-5 rounded-full bg-gold-500/30 flex items-center justify-center text-[10px] font-black text-gold-300">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </span>
+                                <span className="hidden sm:inline">{user.name}</span>
+                            </Link>
                             <button
                                 onClick={handleLogout}
                                 className="px-3 py-1.5 rounded-full text-xs font-bold bg-navy-800/80 border border-navy-600/30 text-navy-400 hover:text-white hover:border-red-500/30 transition-all"

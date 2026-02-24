@@ -156,6 +156,28 @@ export interface Translations {
     logout: string;
     noAccount: string;
     hasAccount: string;
+
+    // Profile
+    myProfile: string;
+    profile: string;
+    memberSince: string;
+    tournamentsPlayed: string;
+    tournamentsWon: string;
+    winRate: string;
+    avgPointsPerMatch: string;
+    recentTournaments: string;
+    bestPartners: string;
+    sharedWins: string;
+    noStatsYet: string;
+    noStatsDesc: string;
+    placement: string;
+    viewProfile: string;
+
+    // Player adding modes
+    addGuest: string;
+    addMember: string;
+    searchUsers: string;
+    noUsersFound: string;
 }
 
 const pl: Translations = {
@@ -294,6 +316,26 @@ const pl: Translations = {
     logout: 'Wyloguj',
     noAccount: 'Nie masz konta?',
     hasAccount: 'Masz już konto?',
+
+    myProfile: 'Mój profil',
+    profile: 'Profil',
+    memberSince: 'Członek od',
+    tournamentsPlayed: 'Turnieje',
+    tournamentsWon: 'Wygrane turnieje',
+    winRate: '% wygranych',
+    avgPointsPerMatch: 'Śr. pkt/mecz',
+    recentTournaments: 'Ostatnie turnieje',
+    bestPartners: 'Najlepsi partnerzy',
+    sharedWins: 'wspólne wygrane',
+    noStatsYet: 'Brak statystyk',
+    noStatsDesc: 'Zagraj w turnieje, aby zobaczyć swoje statystyki.',
+    placement: 'miejsce',
+    viewProfile: 'Profil',
+
+    addGuest: 'Dodaj gościa',
+    addMember: 'Dodaj członka',
+    searchUsers: 'Szukaj użytkownika...',
+    noUsersFound: 'Nie znaleziono użytkowników',
 };
 
 const en: Translations = {
@@ -432,6 +474,26 @@ const en: Translations = {
     logout: 'Logout',
     noAccount: 'Don\'t have an account?',
     hasAccount: 'Already have an account?',
+
+    myProfile: 'My Profile',
+    profile: 'Profile',
+    memberSince: 'Member since',
+    tournamentsPlayed: 'Tournaments',
+    tournamentsWon: 'Tournaments won',
+    winRate: 'Win rate',
+    avgPointsPerMatch: 'Avg pts/match',
+    recentTournaments: 'Recent Tournaments',
+    bestPartners: 'Best Partners',
+    sharedWins: 'shared wins',
+    noStatsYet: 'No stats yet',
+    noStatsDesc: 'Play some tournaments to see your stats.',
+    placement: 'place',
+    viewProfile: 'Profile',
+
+    addGuest: 'Add Guest',
+    addMember: 'Add Member',
+    searchUsers: 'Search users...',
+    noUsersFound: 'No users found',
 };
 
 const de: Translations = {
@@ -570,6 +632,26 @@ const de: Translations = {
     logout: 'Abmelden',
     noAccount: 'Noch kein Konto?',
     hasAccount: 'Bereits ein Konto?',
+
+    myProfile: 'Mein Profil',
+    profile: 'Profil',
+    memberSince: 'Mitglied seit',
+    tournamentsPlayed: 'Turniere',
+    tournamentsWon: 'Turniere gewonnen',
+    winRate: 'Siegquote',
+    avgPointsPerMatch: 'Ø Pkt/Spiel',
+    recentTournaments: 'Letzte Turniere',
+    bestPartners: 'Beste Partner',
+    sharedWins: 'gemeinsame Siege',
+    noStatsYet: 'Noch keine Statistiken',
+    noStatsDesc: 'Spiele einige Turniere, um deine Statistiken zu sehen.',
+    placement: 'Platz',
+    viewProfile: 'Profil',
+
+    addGuest: 'Gast hinzufügen',
+    addMember: 'Mitglied hinzufügen',
+    searchUsers: 'Benutzer suchen...',
+    noUsersFound: 'Keine Benutzer gefunden',
 };
 
 const ua: Translations = {
@@ -710,6 +792,26 @@ const ua: Translations = {
     logout: 'Вийти',
     noAccount: 'Немає акаунту?',
     hasAccount: 'Вже є акаунт?',
+
+    myProfile: 'Мій профіль',
+    profile: 'Профіль',
+    memberSince: 'Учасник з',
+    tournamentsPlayed: 'Турніри',
+    tournamentsWon: 'Виграні турніри',
+    winRate: '% перемог',
+    avgPointsPerMatch: 'Сер. очків/матч',
+    recentTournaments: 'Остання турніри',
+    bestPartners: 'Найкращі партнери',
+    sharedWins: 'спільні перемоги',
+    noStatsYet: 'Ще немає статистики',
+    noStatsDesc: 'Зіграйте в турніри, щоб побачити свою статистику.',
+    placement: 'місце',
+    viewProfile: 'Профіль',
+
+    addGuest: 'Додати гостя',
+    addMember: 'Додати учасника',
+    searchUsers: 'Пошук користувача...',
+    noUsersFound: 'Користувачів не знайдено',
 };
 
 export const translations: Record<Locale, Translations> = { pl, en, de, ua };

@@ -164,7 +164,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                         {copied ? (
                             <>✓ {t.linkCopied}</>
                         ) : (
-                            <>📋 {t.shareResults}</>
+                            <> {t.shareResults}</>
                         )}
                     </button>
                 </div>
@@ -194,7 +194,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                             </button>
                         </div>
                     </div>
-                    <div className="glass-card-static overflow-hidden">
+                    <div className="glass-card-static overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-navy-700/50">

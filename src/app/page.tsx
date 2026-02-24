@@ -76,41 +76,43 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main className="max-w-5xl mx-auto px-4 py-8 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center">
-        {/* Hero Section */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="relative inline-block mb-6">
-            <Image
-              src={logo}
-              alt="Baza Padel Club"
-              width={280}
-              height={80}
-              className="mx-auto object-contain"
-              priority
-            />
+      <main className="max-w-5xl mx-auto px-4">
+        {/* Hero Section — fills viewport */}
+        <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center py-8">
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="relative inline-block mb-6">
+              <Image
+                src={logo}
+                alt="Baza Padel Club"
+                width={280}
+                height={80}
+                className="mx-auto object-contain"
+                priority
+              />
+            </div>
+            <p className="text-navy-300 text-lg max-w-md mx-auto">
+              Americano • Mexicano • Mixed • Team
+            </p>
           </div>
-          <p className="text-navy-300 text-lg max-w-md mx-auto">
-            Americano • Mexicano • Mixed • Team
-          </p>
+
+          {/* New Tournament CTA */}
+          <div className="flex justify-center animate-slide-up stagger-1" style={{ opacity: 0 }}>
+            <button
+              onClick={() => router.push('/tournament/new')}
+              className="btn-primary text-lg px-10 py-4 flex items-center gap-3"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="10" y1="4" x2="10" y2="16" />
+                <line x1="4" y1="10" x2="16" y2="10" />
+              </svg>
+              {t.newTournament}
+            </button>
+          </div>
         </div>
 
-        {/* New Tournament CTA */}
-        <div className="flex justify-center mb-10 animate-slide-up stagger-1" style={{ opacity: 0 }}>
-          <button
-            onClick={() => router.push('/tournament/new')}
-            className="btn-primary text-lg px-10 py-4 flex items-center gap-3"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="10" y1="4" x2="10" y2="16" />
-              <line x1="4" y1="10" x2="16" y2="10" />
-            </svg>
-            {t.newTournament}
-          </button>
-        </div>
-
-        {/* Tournament List */}
+        {/* Tournament List — below the fold */}
         {sortedTournaments.length > 0 && (
-          <div className="w-full animate-slide-up stagger-2" style={{ opacity: 0 }}>
+          <div className="w-full pb-8 animate-slide-up stagger-2" style={{ opacity: 0 }}>
             <h2 className="text-xl font-bold mb-4 text-navy-200">{t.savedTournaments}</h2>
 
             {/* Search & Filter Bar */}

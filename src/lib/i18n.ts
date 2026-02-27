@@ -178,6 +178,19 @@ export interface Translations {
     addMember: string;
     searchUsers: string;
     noUsersFound: string;
+
+    // Public Leaderboard
+    publicLeaderboard: string;
+    leaderboardSubtitle: string;
+    periodDaily: string;
+    periodWeekly: string;
+    periodMonthly: string;
+    periodOverall: string;
+    typeAll: string;
+    typeOfficial: string;
+    tournaments: string;
+    noLeaderboardData: string;
+    gallery: string;
 }
 
 const pl: Translations = {
@@ -336,6 +349,18 @@ const pl: Translations = {
     addMember: 'Dodaj członka',
     searchUsers: 'Szukaj użytkownika...',
     noUsersFound: 'Nie znaleziono użytkowników',
+
+    publicLeaderboard: 'Ranking graczy',
+    leaderboardSubtitle: 'Statystyki graczy ze wszystkich turniejów',
+    periodDaily: 'Dziś',
+    periodWeekly: 'Tydzień',
+    periodMonthly: 'Miesiąc',
+    periodOverall: 'Ogólny',
+    typeAll: 'Wszystkie turnieje',
+    typeOfficial: 'Oficjalne',
+    tournaments: 'Turnieje',
+    noLeaderboardData: 'Brak danych do wyświetlenia',
+    gallery: 'Galeria',
 };
 
 const en: Translations = {
@@ -494,6 +519,18 @@ const en: Translations = {
     addMember: 'Add Member',
     searchUsers: 'Search users...',
     noUsersFound: 'No users found',
+
+    publicLeaderboard: 'Player Rankings',
+    leaderboardSubtitle: 'Player statistics across all tournaments',
+    periodDaily: 'Today',
+    periodWeekly: 'Week',
+    periodMonthly: 'Month',
+    periodOverall: 'Overall',
+    typeAll: 'All Tournaments',
+    typeOfficial: 'Official',
+    tournaments: 'Tournaments',
+    noLeaderboardData: 'No data to display',
+    gallery: 'Gallery',
 };
 
 const de: Translations = {
@@ -652,6 +689,18 @@ const de: Translations = {
     addMember: 'Mitglied hinzufügen',
     searchUsers: 'Benutzer suchen...',
     noUsersFound: 'Keine Benutzer gefunden',
+
+    publicLeaderboard: 'Spieler-Rangliste',
+    leaderboardSubtitle: 'Spielerstatistiken aus allen Turnieren',
+    periodDaily: 'Heute',
+    periodWeekly: 'Woche',
+    periodMonthly: 'Monat',
+    periodOverall: 'Gesamt',
+    typeAll: 'Alle Turniere',
+    typeOfficial: 'Offiziell',
+    tournaments: 'Turniere',
+    noLeaderboardData: 'Keine Daten verfügbar',
+    gallery: 'Galerie',
 };
 
 const ua: Translations = {
@@ -812,6 +861,18 @@ const ua: Translations = {
     addMember: 'Додати учасника',
     searchUsers: 'Пошук користувача...',
     noUsersFound: 'Користувачів не знайдено',
+
+    publicLeaderboard: 'Рейтинг гравців',
+    leaderboardSubtitle: 'Статистика гравців з усіх турнірів',
+    periodDaily: 'Сьогодні',
+    periodWeekly: 'Тиждень',
+    periodMonthly: 'Місяць',
+    periodOverall: 'Загалом',
+    typeAll: 'Усі турніри',
+    typeOfficial: 'Офіційні',
+    tournaments: 'Турніри',
+    noLeaderboardData: 'Немає даних для відображення',
+    gallery: 'Галерея',
 };
 
 export const translations: Record<Locale, Translations> = { pl, en, de, ua };

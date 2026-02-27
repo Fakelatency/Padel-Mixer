@@ -13,7 +13,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const SQLITE_PATH = join(__dirname, 'dev.db');
+const SQLITE_PATH = join(__dirname, '..', 'dev.db');
 const PG_URL = process.env.DATABASE_URL || 'postgresql://postgres:dwieliczby12@localhost:5432/padel_mixer';
 
 async function migrate() {

@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Image from 'next/image';
+import Link from 'next/link';
 import logo from '../../public/baza-padel-logo.png';
 import { useState } from 'react';
 
@@ -107,6 +108,17 @@ export default function HomePage() {
               </svg>
               {t.newTournament}
             </button>
+          </div>
+
+          {/* Quick Nav */}
+          <div className="flex justify-center gap-4 mt-6 animate-fade-in">
+            <Link href="/leaderboard" className="text-sm text-navy-400 hover:text-gold-400 transition-colors font-medium">
+              🏆 {t.publicLeaderboard}
+            </Link>
+            <span className="text-navy-600">•</span>
+            <Link href="/gallery" className="text-sm text-navy-400 hover:text-gold-400 transition-colors font-medium">
+              📸 {t.gallery}
+            </Link>
           </div>
         </div>
 

@@ -5,16 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import { TournamentFormat, ScoringSystem, Player, Team, Gender, RoundMode } from '@/lib/types';
+import { brand } from '@/lib/brand';
 
 type Step = 'format' | 'players' | 'settings' | 'review';
 const STEPS: Step[] = ['format', 'players', 'settings', 'review'];
 
 const FORMAT_OPTIONS: { value: TournamentFormat; icon: string }[] = [
-    { value: 'americano', icon: '🎾' },
-    { value: 'mixedAmericano', icon: '👫' },
-    { value: 'teamAmericano', icon: '👥' },
-    { value: 'mexicano', icon: '🌮' },
-    { value: 'teamMexicano', icon: '🏆' },
+    { value: 'americano', icon: brand.icons.formats.americano || '🎾' },
+    { value: 'mixedAmericano', icon: brand.icons.formats.mixedAmericano || '👫' },
+    { value: 'teamAmericano', icon: brand.icons.formats.teamAmericano || '👥' },
+    { value: 'mexicano', icon: brand.icons.formats.mexicano || '🌮' },
+    { value: 'teamMexicano', icon: brand.icons.formats.teamMexicano || '🏆' },
 ];
 
 const SCORING_OPTIONS: ScoringSystem[] = [16, 21, 24, 32];
@@ -319,7 +320,7 @@ export default function NewTournamentPage() {
                                                 </p>
                                             </div>
                                             {format === opt.value && (
-                                                <div className="ml-auto text-gold-400 text-xl">✓</div>
+                                                <div className="ml-auto text-gold-400 text-xl">{brand.icons.misc.checkmark}</div>
                                             )}
                                         </div>
                                     </button>
@@ -776,7 +777,7 @@ export default function NewTournamentPage() {
 
                     {step === 'review' ? (
                         <button onClick={handleStart} className="btn-primary text-lg">
-                            🎾 {t.startTournament}
+                            {brand.icons.misc.startTournament} {t.startTournament}
                         </button>
                     ) : (
                         <button

@@ -7,13 +7,8 @@ import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import type { UserStats } from '@/app/api/user/stats/route';
 
-const formatIcons: Record<string, string> = {
-    americano: '🎾',
-    mixedAmericano: '👫',
-    teamAmericano: '👥',
-    mexicano: '🌮',
-    teamMexicano: '🏆',
-};
+import { brand } from '@/lib/brand';
+const formatIcons = brand.icons.formats;
 
 export default function ProfilePage() {
     const { t, user, authLoading } = useApp();
@@ -175,7 +170,7 @@ export default function ProfilePage() {
                                 </h2>
                                 <div className="space-y-3">
                                     {stats.recentTournaments.map((tournament, idx) => {
-                                        const placementEmoji = tournament.placement === 1 ? '🥇' : tournament.placement === 2 ? '🥈' : tournament.placement === 3 ? '🥉' : `#${tournament.placement}`;
+                                        const placementEmoji = tournament.placement === 1 ? brand.icons.podium.placement1 : tournament.placement === 2 ? brand.icons.podium.placement2 : tournament.placement === 3 ? brand.icons.podium.placement3 : `#${tournament.placement}`;
                                         return (
                                             <div
                                                 key={tournament.tournamentId}

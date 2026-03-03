@@ -9,6 +9,7 @@ import { calculateStandings } from '@/lib/scoring';
 import { isScoreValid } from '@/lib/scoring';
 import { Match, PlayerStats } from '@/lib/types';
 import { sortStandings } from '@/lib/scheduler';
+import { brand } from '@/lib/brand';
 
 type Tab = 'matches' | 'leaderboard' | 'stats';
 type SortMode = 'points' | 'wins';
@@ -137,7 +138,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                 <div className="text-center mb-6 animate-fade-in">
                     <h1 className="text-2xl font-bold text-white mb-1">{tournament.name}</h1>
                     <div className="flex items-center justify-center gap-3 text-sm text-navy-300">
-                        <span className="badge badge-live">LIVE</span>
+                        <span className="badge badge-live">{brand.icons.status.live}</span>
                         <span>
                             {t.round} {tournament.currentRound}
                             {tournament.roundMode !== 'unlimited' && (
@@ -154,13 +155,13 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                         className={`tab ${activeTab === 'matches' ? 'active' : ''}`}
                         onClick={() => setActiveTab('matches')}
                     >
-                        🎾 {t.matches}
+                        {brand.icons.tabs.matches} {t.matches}
                     </button>
                     <button
                         className={`tab ${activeTab === 'leaderboard' ? 'active' : ''}`}
                         onClick={() => setActiveTab('leaderboard')}
                     >
-                        🏆 {t.leaderboard}
+                        {brand.icons.tabs.leaderboard} {t.leaderboard}
                     </button>
                     <button
                         className={`tab ${activeTab === 'stats' ? 'active' : ''}`}
@@ -244,7 +245,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
                                                     <div className="flex gap-2 justify-center mt-4">
                                                         <button onClick={saveScore} className="btn-primary py-2 px-6 text-sm">
-                                                            ✓ {t.saveScore}
+                                                            {brand.icons.misc.checkmark} {t.saveScore}
                                                         </button>
                                                         <button
                                                             onClick={() => setEditingMatch(null)}
@@ -277,7 +278,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                                 {t.court} {match.court}
                                                             </span>
                                                             {match.status === 'completed' && (
-                                                                <span className="text-xs text-green-300 font-medium bg-green-500/20 px-2 py-0.5 rounded-full">✓</span>
+                                                                <span className="text-xs text-green-300 font-medium bg-green-500/20 px-2 py-0.5 rounded-full">{brand.icons.status.completed}</span>
                                                             )}
                                                         </div>
 

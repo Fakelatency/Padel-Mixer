@@ -5,16 +5,10 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '../../public/baza-padel-logo.png';
+import { brand } from '@/lib/brand';
 import { useState } from 'react';
 
-const formatIcons: Record<string, string> = {
-  americano: '🎾',
-  mixedAmericano: '👫',
-  teamAmericano: '👥',
-  mexicano: '🌮',
-  teamMexicano: '🏆',
-};
+const formatIcons = brand.icons.formats;
 
 export default function HomePage() {
   const { t, tournaments, removeTournament } = useApp();
@@ -61,11 +55,11 @@ export default function HomePage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <span className="badge badge-live">LIVE</span>;
+        return <span className="badge badge-live">{brand.icons.status.live}</span>;
       case 'finished':
-        return <span className="badge badge-completed">✓</span>;
+        return <span className="badge badge-completed">{brand.icons.status.completed}</span>;
       default:
-        return <span className="badge badge-setup">⚙</span>;
+        return <span className="badge badge-setup">{brand.icons.status.setup}</span>;
     }
   };
 
@@ -83,8 +77,8 @@ export default function HomePage() {
           <div className="text-center mb-12 animate-fade-in">
             <div className="relative inline-block mb-6">
               <Image
-                src={logo}
-                alt="Baza Padel Club"
+                src={brand.logoPath}
+                alt={brand.clubName}
                 width={280}
                 height={80}
                 className="mx-auto object-contain"
@@ -218,7 +212,7 @@ export default function HomePage() {
                           onClick={() => setDeletingId(tournament.id)}
                           className="btn-ghost py-2 px-3 text-sm text-red-400 hover:text-red-300"
                         >
-                          ✕
+                          {brand.icons.misc.delete}
                         </button>
                       )}
                     </div>

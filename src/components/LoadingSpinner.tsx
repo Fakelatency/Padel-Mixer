@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { brand } from '@/lib/brand';
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
@@ -26,7 +27,7 @@ export default function LoadingSpinner({ text, size = 'md' }: LoadingSpinnerProp
         <div className={`flex flex-col items-center justify-center ${containerClasses[size]} animate-fade-in`}>
             <div className={`relative ${sizeClasses[size]}`}>
                 <Image
-                    src={`${BASE}/baza-padel-sygnet.png`}
+                    src={`${BASE}${brand.signetPath}`}
                     alt=""
                     fill
                     unoptimized

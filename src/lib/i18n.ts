@@ -2,6 +2,8 @@
 // i18n — Polish (default), English & German
 // ==========================================
 
+import { brand } from './brand';
+
 export type Locale = 'pl' | 'en' | 'de' | 'ua';
 
 export interface Translations {
@@ -203,7 +205,7 @@ export interface Translations {
 }
 
 const pl: Translations = {
-    appName: 'Baza Padel Tournament',
+    appName: brand.appTitle,
     newTournament: 'Nowy turniej',
     continueTournament: 'Kontynuuj',
     deleteTournament: 'Usuń turniej',
@@ -381,7 +383,7 @@ const pl: Translations = {
 };
 
 const en: Translations = {
-    appName: 'Baza Padel Tournament',
+    appName: brand.appTitle,
     newTournament: 'New Tournament',
     continueTournament: 'Continue',
     deleteTournament: 'Delete Tournament',
@@ -559,7 +561,7 @@ const en: Translations = {
 };
 
 const de: Translations = {
-    appName: 'Baza Padel Tournament',
+    appName: brand.appTitle,
     newTournament: 'Neues Turnier',
     continueTournament: 'Fortsetzen',
     deleteTournament: 'Turnier löschen',
@@ -737,7 +739,7 @@ const de: Translations = {
 };
 
 const ua: Translations = {
-    appName: 'Baza Padel Tournament',
+    appName: brand.appTitle,
     newTournament: 'Новий турнір',
     continueTournament: 'Продовжити',
     deleteTournament: 'Видалити турнір',

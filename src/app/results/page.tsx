@@ -7,6 +7,7 @@ import { calculateStandings } from '@/lib/scoring';
 import { Tournament, PlayerStats } from '@/lib/types';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { brand } from '@/lib/brand';
 
 function SharedResultsContent() {
     const searchParams = useSearchParams();
@@ -34,7 +35,7 @@ function SharedResultsContent() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div className="text-5xl mb-4">😕</div>
+                    <div className="text-5xl mb-4">{brand.icons.misc.error}</div>
                     <h1 className="text-2xl font-bold text-white mb-2">Nie znaleziono wyników</h1>
                     <p className="text-navy-300">Invalid or expired results link.</p>
                 </div>
@@ -54,7 +55,7 @@ function SharedResultsContent() {
         tournament.players.find((p) => p.id === pid)?.name || pid;
 
     const podium = standings.slice(0, 3);
-    const trophies = ['🥇', '🥈', '🥉'];
+    const trophies = [brand.icons.podium.placement1, brand.icons.podium.placement2, brand.icons.podium.placement3];
     const podiumClasses = ['podium-1', 'podium-2', 'podium-3'];
 
     return (
@@ -65,10 +66,10 @@ function SharedResultsContent() {
                 <header className="sticky top-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/30">
                     <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-center gap-3">
                         <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 p-1">
-                            <Image src="/logo.svg" alt="Logo" width={32} height={32} className="w-full h-full object-contain" />
+                            <Image src={brand.faviconPath} alt={brand.clubName} width={32} height={32} className="w-full h-full object-contain" />
                         </div>
                         <span className="text-lg font-bold bg-gradient-to-r from-gold-400 to-gold-500 bg-clip-text text-transparent">
-                            Baza Padel Tournament
+                            {brand.appTitle}
                         </span>
                     </div>
                 </header>
@@ -94,7 +95,7 @@ function SharedResultsContent() {
                             {podium[1] && (
                                 <div className="text-center">
                                     <div className={`${podiumClasses[1]} rounded-2xl p-5 w-28 sm:w-36`}>
-                                        <div className="text-3xl mb-1">🥈</div>
+                                        <div className="text-3xl mb-1">{brand.icons.podium.second}</div>
                                         <div className="font-bold text-white text-sm sm:text-base truncate">{podium[1].playerName}</div>
                                         <div className="text-lg font-black text-navy-200 mt-1">{podium[1].totalPoints}</div>
                                         <div className="text-xs text-navy-400">punkty</div>
@@ -108,7 +109,7 @@ function SharedResultsContent() {
                             {podium[0] && (
                                 <div className="text-center">
                                     <div className={`${podiumClasses[0]} rounded-2xl p-6 w-32 sm:w-40`}>
-                                        <div className="text-4xl mb-1 animate-trophy">🏆</div>
+                                        <div className="text-4xl mb-1 animate-trophy">{brand.icons.podium.first}</div>
                                         <div className="text-xs uppercase tracking-wider text-gold-600 font-bold mb-1">Mistrz</div>
                                         <div className="font-black text-white text-base sm:text-lg truncate">{podium[0].playerName}</div>
                                         <div className="text-2xl font-black text-gold-400 mt-1">{podium[0].totalPoints}</div>
@@ -123,7 +124,7 @@ function SharedResultsContent() {
                             {podium[2] && (
                                 <div className="text-center">
                                     <div className={`${podiumClasses[2]} rounded-2xl p-5 w-28 sm:w-36`}>
-                                        <div className="text-3xl mb-1">🥉</div>
+                                        <div className="text-3xl mb-1">{brand.icons.podium.third}</div>
                                         <div className="font-bold text-white text-sm sm:text-base truncate">{podium[2].playerName}</div>
                                         <div className="text-lg font-black text-orange-300 mt-1">{podium[2].totalPoints}</div>
                                         <div className="text-xs text-navy-400">punkty</div>
@@ -223,9 +224,9 @@ function SharedResultsContent() {
                     {/* Footer */}
                     <div className="text-center py-8 border-t border-navy-800/50 mt-8">
                         <div className="w-12 h-12 mx-auto rounded-xl overflow-hidden bg-white/5 p-2 mb-2 opacity-40">
-                            <Image src="/logo.svg" alt="Logo" width={48} height={48} className="w-full h-full object-contain" />
+                            <Image src={brand.faviconPath} alt={brand.clubName} width={48} height={48} className="w-full h-full object-contain" />
                         </div>
-                        <p className="text-xs text-navy-500">Padel Mixer</p>
+                        <p className="text-xs text-navy-500">{brand.clubName}</p>
                     </div>
                 </main>
             </div>

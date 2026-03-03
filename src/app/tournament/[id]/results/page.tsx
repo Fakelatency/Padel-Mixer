@@ -8,6 +8,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { calculateStandings } from '@/lib/scoring';
 import { generateShareableUrl } from '@/lib/share';
 import Image from 'next/image';
+import { brand } from '@/lib/brand';
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -69,7 +70,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     };
 
     const podium = sortedStandings.slice(0, 3);
-    const trophies = ['🥇', '🥈', '🥉'];
+    const trophies = [brand.icons.podium.placement1, brand.icons.podium.placement2, brand.icons.podium.placement3];
     const podiumClasses = ['podium-1', 'podium-2', 'podium-3'];
 
     return (
@@ -96,7 +97,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                         {podium[1] && (
                             <div className="text-center animate-slide-up stagger-2" style={{ opacity: 0 }}>
                                 <div className={`${podiumClasses[1]} rounded-2xl p-5 w-28 sm:w-36`}>
-                                    <div className="text-3xl mb-1">🥈</div>
+                                    <div className="text-3xl mb-1">{brand.icons.podium.second}</div>
                                     <div className="font-bold text-white text-sm sm:text-base truncate">
                                         {podium[1].playerName}
                                     </div>
@@ -115,7 +116,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                         {podium[0] && (
                             <div className="text-center animate-slide-up stagger-1" style={{ opacity: 0 }}>
                                 <div className={`${podiumClasses[0]} rounded-2xl p-6 w-32 sm:w-40`}>
-                                    <div className="text-4xl mb-1 animate-trophy">🏆</div>
+                                    <div className="text-4xl mb-1 animate-trophy">{brand.icons.podium.first}</div>
                                     <div className="text-xs uppercase tracking-wider text-gold-600 font-bold mb-1">
                                         {t.champion}
                                     </div>
@@ -137,7 +138,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                         {podium[2] && (
                             <div className="text-center animate-slide-up stagger-3" style={{ opacity: 0 }}>
                                 <div className={`${podiumClasses[2]} rounded-2xl p-5 w-28 sm:w-36`}>
-                                    <div className="text-3xl mb-1">🥉</div>
+                                    <div className="text-3xl mb-1">{brand.icons.podium.third}</div>
                                     <div className="font-bold text-white text-sm sm:text-base truncate">
                                         {podium[2].playerName}
                                     </div>
@@ -307,9 +308,9 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 {/* Footer with logo */}
                 <div className="text-center py-8 border-t border-navy-800/50 mt-8">
                     <div className="w-12 h-12 mx-auto rounded-xl overflow-hidden bg-white/5 p-2 mb-2 opacity-40">
-                        <Image src="/logo.jpg" alt="Logo" width={48} height={48} className="w-full h-full object-contain" />
+                        <Image src={brand.faviconPath} alt={brand.clubName} width={48} height={48} className="w-full h-full object-contain" />
                     </div>
-                    <p className="text-xs text-navy-500">Baza Padel Club</p>
+                    <p className="text-xs text-navy-500">{brand.clubName}</p>
                 </div>
 
                 {/* Repeat & Back buttons */}

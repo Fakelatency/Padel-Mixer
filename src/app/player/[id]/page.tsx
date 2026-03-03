@@ -42,13 +42,8 @@ interface PublicProfile {
     };
 }
 
-const formatIcons: Record<string, string> = {
-    americano: '🎾',
-    mixedAmericano: '👫',
-    teamAmericano: '👥',
-    mexicano: '🌮',
-    teamMexicano: '🏆',
-};
+import { brand } from '@/lib/brand';
+const formatIcons = brand.icons.formats;
 
 export default function PublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -89,7 +84,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
                 <Header />
                 <div className="flex items-center justify-center min-h-[60vh]">
                     <div className="text-center">
-                        <div className="text-5xl mb-4">😕</div>
+                        <div className="text-5xl mb-4">{brand.icons.misc.error}</div>
                         <h1 className="text-2xl font-bold text-white mb-2">Player not found</h1>
                         <p className="text-navy-400 mb-6">This player profile doesn&apos;t exist.</p>
                         <button onClick={() => router.push('/')} className="btn-primary px-6 py-2">
@@ -199,7 +194,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
                                 </h2>
                                 <div className="space-y-3">
                                     {stats.recentTournaments.map((tournament, idx) => {
-                                        const placementEmoji = tournament.placement === 1 ? '🥇' : tournament.placement === 2 ? '🥈' : tournament.placement === 3 ? '🥉' : `#${tournament.placement}`;
+                                        const placementEmoji = tournament.placement === 1 ? brand.icons.podium.placement1 : tournament.placement === 2 ? brand.icons.podium.placement2 : tournament.placement === 3 ? brand.icons.podium.placement3 : `#${tournament.placement}`;
                                         return (
                                             <div
                                                 key={tournament.tournamentId}
@@ -208,7 +203,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
                                                 onClick={() => router.push(`/tournament/${tournament.tournamentId}/results`)}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className="text-2xl">{formatIcons[tournament.format] || '🎾'}</div>
+                                                    <div className="text-2xl">{formatIcons[tournament.format] || brand.icons.formats.americano}</div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <h3 className="font-bold text-white truncate">{tournament.tournamentName}</h3>

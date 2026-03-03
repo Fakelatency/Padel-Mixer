@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { brand } from '@/lib/brand';
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
@@ -46,7 +47,7 @@ export default function LeaderboardPage() {
             .catch(() => setLoading(false));
     }, [period, type]);
 
-    const trophies = ['🥇', '🥈', '🥉'];
+    const trophies = [brand.icons.podium.placement1, brand.icons.podium.placement2, brand.icons.podium.placement3];
     const periodOptions: { value: Period; label: string }[] = [
         { value: 'daily', label: t.periodDaily },
         { value: 'weekly', label: t.periodWeekly },

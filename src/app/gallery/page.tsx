@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import { brand } from '@/lib/brand';
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
@@ -182,7 +183,7 @@ export default function GalleryPage() {
                     <div className="flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
                         <div className="relative w-24 h-24 mb-6">
                             <Image
-                                src={`${BASE}/baza-padel-sygnet.png`}
+                                src={`${BASE}${brand.signetPath}`}
                                 alt="Loading"
                                 fill
                                 unoptimized
@@ -213,7 +214,7 @@ export default function GalleryPage() {
                                             <p className="text-white text-xs font-medium truncate">{photo.caption}</p>
                                         )}
                                         {photo.tournament && (
-                                            <p className="text-gold-400 text-[10px] truncate">🏆 {photo.tournament.name}</p>
+                                            <p className="text-gold-400 text-[10px] truncate">{brand.icons.misc.tournament} {photo.tournament.name}</p>
                                         )}
                                     </div>
                                 </div>
@@ -224,7 +225,7 @@ export default function GalleryPage() {
                     <div className="glass-card-static p-12 text-center animate-fade-in">
                         <div className="relative w-16 h-16 mx-auto mb-4 opacity-30">
                             <Image
-                                src={`${BASE}/baza-padel-sygnet.png`}
+                                src={`${BASE}${brand.signetPath}`}
                                 alt=""
                                 fill
                                 unoptimized
@@ -245,7 +246,7 @@ export default function GalleryPage() {
                             className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl z-50"
                             onClick={() => setLightboxPhoto(null)}
                         >
-                            ✕
+                            {brand.icons.misc.delete}
                         </button>
                         <div className="relative max-w-[90vw] max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
                             <Image

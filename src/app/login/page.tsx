@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { useApp } from '@/context/AppContext';
+import { brand } from '@/lib/brand';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -44,8 +45,8 @@ export default function LoginPage() {
                 <div className="text-center mb-8 animate-fade-in">
                     <div className="relative inline-block mb-4">
                         <Image
-                            src="/baza-padel-logo.png"
-                            alt="Baza Padel Club"
+                            src={brand.logoPath}
+                            alt={brand.clubName}
                             width={220}
                             height={60}
                             className="mx-auto object-contain"

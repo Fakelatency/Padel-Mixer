@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface PublicProfile {
     user: {
@@ -77,9 +78,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
         return (
             <>
                 <Header />
-                <div className="flex items-center justify-center min-h-[60vh]">
-                    <div className="text-navy-400 text-lg">Loading...</div>
-                </div>
+                <LoadingSpinner size="lg" />
             </>
         );
     }

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import type { UserStats } from '@/app/api/user/stats/route';
 
 const formatIcons: Record<string, string> = {
@@ -52,9 +53,7 @@ export default function ProfilePage() {
         return (
             <>
                 <Header />
-                <div className="flex items-center justify-center min-h-[60vh]">
-                    <div className="text-navy-400 text-lg">Loading...</div>
-                </div>
+                <LoadingSpinner size="lg" />
             </>
         );
     }
@@ -88,9 +87,7 @@ export default function ProfilePage() {
                 </div>
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-16">
-                        <div className="text-navy-400 text-lg">Loading...</div>
-                    </div>
+                    <LoadingSpinner />
                 ) : !stats || stats.tournamentsPlayed === 0 ? (
                     /* Empty State */
                     <div className="text-center py-16 animate-fade-in">

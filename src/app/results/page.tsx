@@ -6,6 +6,7 @@ import { parseShareableData } from '@/lib/share';
 import { calculateStandings } from '@/lib/scoring';
 import { Tournament, PlayerStats } from '@/lib/types';
 import Image from 'next/image';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 function SharedResultsContent() {
     const searchParams = useSearchParams();
@@ -44,7 +45,7 @@ function SharedResultsContent() {
     if (!tournament) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="text-navy-400 text-lg">Loading...</div>
+                <LoadingSpinner />
             </div>
         );
     }
@@ -236,9 +237,7 @@ export default function SharedResultsPage() {
     return (
         <Suspense
             fallback={
-                <div className="min-h-screen flex items-center justify-center">
-                    <div className="text-navy-400 text-lg">Loading...</div>
-                </div>
+                <LoadingSpinner />
             }
         >
             <SharedResultsContent />

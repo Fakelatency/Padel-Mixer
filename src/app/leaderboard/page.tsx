@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
+import LoadingSpinner from '@/components/LoadingSpinner';
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'overall';
 type LeaderboardType = 'all' | 'official';
@@ -37,7 +40,7 @@ export default function LeaderboardPage() {
 
     useEffect(() => {
         setLoading(true);
-        fetch(`/api/leaderboard?period=${period}&type=${type}`)
+        fetch(`${BASE}/api/leaderboard?period=${period}&type=${type}`)
             .then(r => r.json())
             .then(d => { setData(d); setLoading(false); })
             .catch(() => setLoading(false));
@@ -57,7 +60,7 @@ export default function LeaderboardPage() {
             <main className="max-w-5xl mx-auto px-4 py-8">
                 {/* Header */}
                 <div className="text-center mb-8 animate-fade-in">
-                    <h1 className="text-3xl font-black text-white mb-2">🏆 {t.publicLeaderboard}</h1>
+                    <h1 className="text-3xl font-black text-white mb-2"> {t.publicLeaderboard}</h1>
                     <p className="text-navy-300">{t.leaderboardSubtitle}</p>
                 </div>
 
@@ -68,8 +71,8 @@ export default function LeaderboardPage() {
                             key={opt.value}
                             onClick={() => setPeriod(opt.value)}
                             className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${period === opt.value
-                                    ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/25'
-                                    : 'bg-navy-800/50 text-navy-300 hover:bg-navy-700/50 hover:text-white'
+                                ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/25'
+                                : 'bg-navy-800/50 text-navy-300 hover:bg-navy-700/50 hover:text-white'
                                 }`}
                         >
                             {opt.label}
@@ -82,8 +85,8 @@ export default function LeaderboardPage() {
                     <button
                         onClick={() => setType('all')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${type === 'all'
-                                ? 'bg-navy-600 text-white'
-                                : 'text-navy-400 hover:text-navy-200'
+                            ? 'bg-navy-600 text-white'
+                            : 'text-navy-400 hover:text-navy-200'
                             }`}
                     >
                         {t.typeAll}
@@ -91,8 +94,8 @@ export default function LeaderboardPage() {
                     <button
                         onClick={() => setType('official')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${type === 'official'
-                                ? 'bg-navy-600 text-white'
-                                : 'text-navy-400 hover:text-navy-200'
+                            ? 'bg-navy-600 text-white'
+                            : 'text-navy-400 hover:text-navy-200'
                             }`}
                     >
                         {t.typeOfficial}
@@ -115,9 +118,7 @@ export default function LeaderboardPage() {
 
                 {/* Leaderboard Table */}
                 {loading ? (
-                    <div className="flex items-center justify-center min-h-[200px]">
-                        <div className="text-navy-400 text-lg">Loading...</div>
-                    </div>
+                    <LoadingSpinner />
                 ) : data && data.entries.length > 0 ? (
                     <div className="glass-card-static overflow-x-auto animate-slide-up stagger-3" style={{ opacity: 0 }}>
                         <table className="w-full">
@@ -143,9 +144,9 @@ export default function LeaderboardPage() {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <span className={`font-black text-lg ${entry.rank === 1 ? 'position-1'
-                                                        : entry.rank === 2 ? 'position-2'
-                                                            : entry.rank === 3 ? 'position-3'
-                                                                : 'text-navy-400'
+                                                    : entry.rank === 2 ? 'position-2'
+                                                        : entry.rank === 3 ? 'position-3'
+                                                            : 'text-navy-400'
                                                     }`}>
                                                     {entry.rank}
                                                 </span>
@@ -169,16 +170,16 @@ export default function LeaderboardPage() {
                                         <td className="px-4 py-3 text-center text-navy-300">{entry.matchesWon}</td>
                                         <td className="px-4 py-3 text-center">
                                             <span className={`font-medium ${entry.winRate >= 60 ? 'text-success'
-                                                    : entry.winRate >= 40 ? 'text-gold-400'
-                                                        : 'text-navy-300'
+                                                : entry.winRate >= 40 ? 'text-gold-400'
+                                                    : 'text-navy-300'
                                                 }`}>
                                                 {entry.winRate}%
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <span className={`font-medium ${entry.pointDifference > 0 ? 'text-success'
-                                                    : entry.pointDifference < 0 ? 'text-error'
-                                                        : 'text-navy-400'
+                                                : entry.pointDifference < 0 ? 'text-error'
+                                                    : 'text-navy-400'
                                                 }`}>
                                                 {entry.pointDifference > 0 ? '+' : ''}{entry.pointDifference}
                                             </span>

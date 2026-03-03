@@ -113,11 +113,11 @@ export default function HomePage() {
           {/* Quick Nav */}
           <div className="flex justify-center gap-4 mt-6 animate-fade-in">
             <Link href="/leaderboard" className="text-sm text-navy-400 hover:text-gold-400 transition-colors font-medium">
-              🏆 {t.publicLeaderboard}
+              {t.publicLeaderboard}
             </Link>
             <span className="text-navy-600">•</span>
             <Link href="/gallery" className="text-sm text-navy-400 hover:text-gold-400 transition-colors font-medium">
-              📸 {t.gallery}
+              {t.gallery}
             </Link>
           </div>
         </div>

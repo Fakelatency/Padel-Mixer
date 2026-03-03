@@ -191,6 +191,15 @@ export interface Translations {
     tournaments: string;
     noLeaderboardData: string;
     gallery: string;
+
+    // Gallery
+    uploadPhoto: string;
+    uploadPhotoTitle: string;
+    caption: string;
+    noTournamentLink: string;
+    uploading: string;
+    noPhotos: string;
+    loadingGallery: string;
 }
 
 const pl: Translations = {
@@ -361,6 +370,14 @@ const pl: Translations = {
     tournaments: 'Turnieje',
     noLeaderboardData: 'Brak danych do wyświetlenia',
     gallery: 'Galeria',
+
+    uploadPhoto: 'Dodaj zdjęcie',
+    uploadPhotoTitle: 'Prześlij zdjęcie',
+    caption: 'Podpis (opcjonalnie)',
+    noTournamentLink: 'Bez powiązania z turniejem',
+    uploading: 'Przesyłanie...',
+    noPhotos: 'Brak zdjęć w galerii',
+    loadingGallery: 'Ładowanie galerii...',
 };
 
 const en: Translations = {
@@ -531,6 +548,14 @@ const en: Translations = {
     tournaments: 'Tournaments',
     noLeaderboardData: 'No data to display',
     gallery: 'Gallery',
+
+    uploadPhoto: 'Upload photo',
+    uploadPhotoTitle: 'Upload Photo',
+    caption: 'Caption (optional)',
+    noTournamentLink: 'No tournament link',
+    uploading: 'Uploading...',
+    noPhotos: 'No photos in gallery',
+    loadingGallery: 'Loading gallery...',
 };
 
 const de: Translations = {
@@ -701,6 +726,14 @@ const de: Translations = {
     tournaments: 'Turniere',
     noLeaderboardData: 'Keine Daten verfügbar',
     gallery: 'Galerie',
+
+    uploadPhoto: 'Foto hochladen',
+    uploadPhotoTitle: 'Foto hochladen',
+    caption: 'Bildunterschrift (optional)',
+    noTournamentLink: 'Kein Turnier verknüpft',
+    uploading: 'Hochladen...',
+    noPhotos: 'Keine Fotos in der Galerie',
+    loadingGallery: 'Galerie wird geladen...',
 };
 
 const ua: Translations = {
@@ -873,6 +906,14 @@ const ua: Translations = {
     tournaments: 'Турніри',
     noLeaderboardData: 'Немає даних для відображення',
     gallery: 'Галерея',
+
+    uploadPhoto: 'Додати фото',
+    uploadPhotoTitle: 'Завантажити фото',
+    caption: 'Підпис (необов\'язково)',
+    noTournamentLink: 'Без прив\'язки до турніру',
+    uploading: 'Завантаження...',
+    noPhotos: 'Немає фотографій у галереї',
+    loadingGallery: 'Завантаження галереї...',
 };
 
 export const translations: Record<Locale, Translations> = { pl, en, de, ua };

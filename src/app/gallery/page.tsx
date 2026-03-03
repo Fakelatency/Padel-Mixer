@@ -6,6 +6,8 @@ import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import Image from 'next/image';
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+
 interface Photo {
     id: string;
     filename: string;
@@ -49,8 +51,8 @@ export default function GalleryPage() {
     async function loadPhotos() {
         setLoading(true);
         const url = filterTournament
-            ? `/api/photos?tournamentId=${filterTournament}`
-            : '/api/photos';
+            ? `${BASE}/api/photos?tournamentId=${filterTournament}`
+            : `${BASE}/api/photos`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -72,7 +74,7 @@ export default function GalleryPage() {
         if (uploadTournament) formData.append('tournamentId', uploadTournament);
 
         try {
-            const res = await fetch('/api/photos', { method: 'POST', body: formData });
+            const res = await fetch(`${BASE}/api/photos`, { method: 'POST', body: formData });
             if (res.ok) {
                 setShowUpload(false);
                 setUploadCaption('');
@@ -92,7 +94,7 @@ export default function GalleryPage() {
             <main className="max-w-6xl mx-auto px-4 py-8">
                 {/* Title */}
                 <div className="text-center mb-8 animate-fade-in">
-                    <h1 className="text-3xl font-black text-white mb-2">📸 {t.gallery}</h1>
+                    <h1 className="text-3xl font-black text-white mb-2"> {t.gallery}</h1>
                 </div>
 
                 {/* Controls */}
@@ -119,7 +121,7 @@ export default function GalleryPage() {
                                 <line x1="8" y1="3" x2="8" y2="13" />
                                 <line x1="3" y1="8" x2="13" y2="8" />
                             </svg>
-                            Upload
+                            {t.uploadPhoto}
                         </button>
                     )}
                 </div>
@@ -128,7 +130,7 @@ export default function GalleryPage() {
                 {showUpload && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowUpload(false)}>
                         <div className="glass-card-static p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-                            <h3 className="text-lg font-bold text-white mb-4">Upload Photo</h3>
+                            <h3 className="text-lg font-bold text-white mb-4">{t.uploadPhotoTitle}</h3>
 
                             <input
                                 ref={fileInputRef}
@@ -139,7 +141,7 @@ export default function GalleryPage() {
 
                             <input
                                 type="text"
-                                placeholder="Caption (optional)"
+                                placeholder={t.caption}
                                 value={uploadCaption}
                                 onChange={(e) => setUploadCaption(e.target.value)}
                                 className="w-full mb-4 bg-navy-900/50 border border-navy-700/50 rounded-xl px-4 py-2 text-sm text-white placeholder:text-navy-500 focus:outline-none focus:border-gold-500/50"
@@ -150,7 +152,7 @@ export default function GalleryPage() {
                                 onChange={(e) => setUploadTournament(e.target.value)}
                                 className="w-full mb-4 bg-navy-900/50 border border-navy-700/50 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-gold-500/50"
                             >
-                                <option value="">No tournament link</option>
+                                <option value="">{t.noTournamentLink}</option>
                                 {tournamentOptions.map((to) => (
                                     <option key={to.id} value={to.id}>{to.name}</option>
                                 ))}
@@ -162,7 +164,7 @@ export default function GalleryPage() {
                                     disabled={uploading}
                                     className="btn-primary flex-1 text-sm py-2"
                                 >
-                                    {uploading ? 'Uploading...' : 'Upload'}
+                                    {uploading ? t.uploading : t.uploadPhoto}
                                 </button>
                                 <button
                                     onClick={() => setShowUpload(false)}
@@ -177,8 +179,17 @@ export default function GalleryPage() {
 
                 {/* Photo Grid */}
                 {loading ? (
-                    <div className="flex items-center justify-center min-h-[200px]">
-                        <div className="text-navy-400 text-lg">Loading...</div>
+                    <div className="flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
+                        <div className="relative w-24 h-24 mb-6">
+                            <Image
+                                src={`${BASE}/baza-padel-sygnet.png`}
+                                alt="Loading"
+                                fill
+                                unoptimized
+                                className="object-contain animate-pulse opacity-40"
+                            />
+                        </div>
+                        <p className="text-navy-400 text-sm font-medium">{t.loadingGallery}</p>
                     </div>
                 ) : photos.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 animate-fade-in">
@@ -189,9 +200,10 @@ export default function GalleryPage() {
                                 onClick={() => setLightboxPhoto(photo)}
                             >
                                 <Image
-                                    src={`/${photo.path}`}
+                                    src={`${BASE}/api/${photo.path}`}
                                     alt={photo.caption || photo.originalName}
                                     fill
+                                    unoptimized
                                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                                 />
@@ -210,8 +222,16 @@ export default function GalleryPage() {
                     </div>
                 ) : (
                     <div className="glass-card-static p-12 text-center animate-fade-in">
-                        <div className="text-4xl mb-4">📷</div>
-                        <p className="text-navy-300">{t.noLeaderboardData}</p>
+                        <div className="relative w-16 h-16 mx-auto mb-4 opacity-30">
+                            <Image
+                                src={`${BASE}/baza-padel-sygnet.png`}
+                                alt=""
+                                fill
+                                unoptimized
+                                className="object-contain"
+                            />
+                        </div>
+                        <p className="text-navy-300">{t.noPhotos}</p>
                     </div>
                 )}
 
@@ -229,10 +249,11 @@ export default function GalleryPage() {
                         </button>
                         <div className="relative max-w-[90vw] max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
                             <Image
-                                src={`/${lightboxPhoto.path}`}
+                                src={`${BASE}/api/${lightboxPhoto.path}`}
                                 alt={lightboxPhoto.caption || lightboxPhoto.originalName}
                                 width={1200}
                                 height={900}
+                                unoptimized
                                 className="object-contain max-h-[85vh] rounded-lg"
                             />
                             <div className="mt-3 text-center">

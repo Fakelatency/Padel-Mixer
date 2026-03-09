@@ -20,8 +20,8 @@ export const brand = {
     faviconPath: '/logo.jpg',
 
     // ─── Typography ───────────────────────────────────────────
-    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-    fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
+    fontFamily: "'Montserrat', system-ui, -apple-system, sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap',
 
     // ─── Color Palette ────────────────────────────────────────
     colors: {

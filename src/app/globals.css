@@ -499,7 +499,7 @@ body {
     inset 0 0 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   padding: 16px;
-  min-height: 180px;
+  aspect-ratio: 2 / 1;
   isolation: isolate;
 }
 
@@ -637,7 +637,8 @@ body {
 }
 
 .court-card-content {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 20;
 }
 

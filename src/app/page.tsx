@@ -9,6 +9,7 @@ import { brand } from '@/lib/brand';
 import { useState } from 'react';
 
 const formatIcons = brand.icons.formats;
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
 export default function HomePage() {
   const { t, tournaments, removeTournament } = useApp();
@@ -64,6 +65,7 @@ export default function HomePage() {
   };
 
   const getFormatLabel = (format: string) => {
+    if (format === 'mixedMexicano') return t.formatMixedMexicano;
     const key = `format${format.charAt(0).toUpperCase() + format.slice(1)}` as keyof typeof t;
     return (t[key] as string) || format;
   };
@@ -77,7 +79,7 @@ export default function HomePage() {
           <div className="text-center mb-12 animate-fade-in">
             <div className="relative inline-block mb-6">
               <Image
-                src={brand.logoPath}
+                src={`${BASE}${brand.logoPath}`}
                 alt={brand.clubName}
                 width={280}
                 height={80}
@@ -165,7 +167,9 @@ export default function HomePage() {
                           : router.push(`/tournament/${tournament.id}`)
                       }
                     >
-                      <div className="text-3xl sm:text-2xl bg-navy-800/50 p-3 sm:p-0 rounded-xl sm:rounded-none sm:bg-transparent">{formatIcons[tournament.format]}</div>
+                      <div className="w-10 h-10 sm:w-8 sm:h-8 bg-navy-800/50 p-2 sm:p-0 rounded-xl sm:rounded-none sm:bg-transparent shrink-0">
+                        <Image src={`${BASE}${brand.signetPath}`} width={32} height={32} alt="Icon" className="w-full h-full object-contain" />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
                           <h3 className="font-bold text-white truncate max-w-[200px] sm:max-w-xs">{tournament.name}</h3>

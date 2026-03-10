@@ -22,11 +22,13 @@ export interface Translations {
     formatMixedAmericano: string;
     formatTeamAmericano: string;
     formatMexicano: string;
+    formatMixedMexicano: string;
     formatTeamMexicano: string;
     formatAmericanoDesc: string;
     formatMixedAmericanoDesc: string;
     formatTeamAmericanoDesc: string;
     formatMexicanoDesc: string;
+    formatMixedMexicanoDesc: string;
     formatTeamMexicanoDesc: string;
 
     // Setup
@@ -92,6 +94,8 @@ export interface Translations {
     podium: string;
     finalStandings: string;
     matchHistory: string;
+    expand: string;
+    collapse: string;
     shareResults: string;
     linkCopied: string;
     shareDescription: string;
@@ -214,16 +218,18 @@ const pl: Translations = {
     backToHome: 'Strona główna',
     language: 'Język',
 
-    formatAmericano: 'Americano',
+    formatAmericano: 'AMERICANO',
     formatMixedAmericano: 'Americano Mieszane',
     formatTeamAmericano: 'Americano Drużynowe',
-    formatMexicano: 'Mexicano',
-    formatTeamMexicano: 'Mexicano Drużynowe',
-    formatAmericanoDesc: 'Klasyczny format — każdy gra z każdym w rotacji. Punkty liczone indywidualnie.',
+    formatMexicano: 'MEXICANO',
+    formatMixedMexicano: 'MEXICANO MIKST',
+    formatTeamMexicano: 'MEXICANO DUET',
+    formatAmericanoDesc: 'Dynamiczna forma rozgrywki, w której system losowo dobiera partnerów i przeciwników.',
     formatMixedAmericanoDesc: 'Pary zawsze składają się z kobiety i mężczyzny. Punkty indywidualne.',
     formatTeamAmericanoDesc: 'Stałe drużyny 2-osobowe. Punkty liczone drużynowo.',
-    formatMexicanoDesc: 'Dynamiczne pary na podstawie rankingu. Im lepiej grasz, tym trudniejsi rywale.',
-    formatTeamMexicanoDesc: 'Stałe drużyny — mecze na podstawie aktualnego rankingu drużyn.',
+    formatMexicanoDesc: 'Dynamiczna forma rozgrywki, w której system dobiera partnerów i przeciwników na podstawie poziomu i ich ostatnich wyników.',
+    formatMixedMexicanoDesc: 'MEXICANO w stałych parach. W każdej parze musi znaleźć się jedna kobieta i jeden mężczyzna.',
+    formatTeamMexicanoDesc: 'To nic innego jak MEXICANO w stałych parach.',
 
     setupTitle: 'Konfiguracja turnieju',
     stepFormat: 'Format',
@@ -263,7 +269,7 @@ const pl: Translations = {
     score: 'Wynik',
     enterScore: 'Wprowadź wynik',
     saveScore: 'Zapisz wynik',
-    nextRound: 'Następna runda',
+    nextRound: 'Zakończ rundę',
     finishTournament: 'Zakończ turniej',
     sittingOut: 'Pauzują',
     allMatchesCompleted: 'Wszystkie mecze zakończone',
@@ -284,6 +290,8 @@ const pl: Translations = {
     podium: 'Podium',
     finalStandings: 'Klasyfikacja końcowa',
     matchHistory: 'Historia meczy',
+    expand: 'Rozwiń',
+    collapse: 'Zwiń',
     shareResults: 'Udostępnij wyniki',
     linkCopied: 'Link skopiowany!',
     shareDescription: 'Udostępnij link z wynikami turnieju',
@@ -392,16 +400,18 @@ const en: Translations = {
     backToHome: 'Home',
     language: 'Language',
 
-    formatAmericano: 'Americano',
+    formatAmericano: 'AMERICANO',
     formatMixedAmericano: 'Mixed Americano',
     formatTeamAmericano: 'Team Americano',
-    formatMexicano: 'Mexicano',
-    formatTeamMexicano: 'Team Mexicano',
-    formatAmericanoDesc: 'Classic format — everyone plays with everyone in rotation. Individual scoring.',
+    formatMexicano: 'MEXICANO',
+    formatMixedMexicano: 'MEXICANO MIXED',
+    formatTeamMexicano: 'MEXICANO DUET',
+    formatAmericanoDesc: 'Dynamic game format where the system randomly selects partners and opponents.',
     formatMixedAmericanoDesc: 'Pairs are always male + female. Individual scoring.',
     formatTeamAmericanoDesc: 'Fixed 2-player teams. Team scoring.',
-    formatMexicanoDesc: 'Dynamic pairing based on rankings. Better you play, tougher the opponents.',
-    formatTeamMexicanoDesc: 'Fixed teams — matches based on current team rankings.',
+    formatMexicanoDesc: 'Dynamic game format where the system selects partners and opponents based on level and recent results.',
+    formatMixedMexicanoDesc: 'MEXICANO in fixed pairs. Each pair must consist of one female and one male.',
+    formatTeamMexicanoDesc: 'Simply MEXICANO in fixed pairs.',
 
     setupTitle: 'Tournament Setup',
     stepFormat: 'Format',
@@ -462,6 +472,8 @@ const en: Translations = {
     podium: 'Podium',
     finalStandings: 'Final Standings',
     matchHistory: 'Match History',
+    expand: 'Expand',
+    collapse: 'Collapse',
     shareResults: 'Share Results',
     linkCopied: 'Link copied!',
     shareDescription: 'Share a link with tournament results',
@@ -570,16 +582,18 @@ const de: Translations = {
     backToHome: 'Startseite',
     language: 'Sprache',
 
-    formatAmericano: 'Americano',
+    formatAmericano: 'AMERICANO',
     formatMixedAmericano: 'Mixed Americano',
     formatTeamAmericano: 'Team Americano',
-    formatMexicano: 'Mexicano',
-    formatTeamMexicano: 'Team Mexicano',
-    formatAmericanoDesc: 'Klassisches Format — jeder spielt mit jedem in Rotation. Einzelwertung.',
+    formatMexicano: 'MEXICANO',
+    formatMixedMexicano: 'MEXICANO MIXED',
+    formatTeamMexicano: 'MEXICANO DUET',
+    formatAmericanoDesc: 'Dynamisches Spielformat, bei dem das System Partner und Gegner zufällig auswählt.',
     formatMixedAmericanoDesc: 'Paare bestehen immer aus Mann + Frau. Einzelwertung.',
     formatTeamAmericanoDesc: 'Feste 2er-Teams. Teamwertung.',
-    formatMexicanoDesc: 'Dynamische Paarung nach Rangliste. Je besser du spielst, desto stärker die Gegner.',
-    formatTeamMexicanoDesc: 'Feste Teams — Spiele basierend auf der aktuellen Teamrangliste.',
+    formatMexicanoDesc: 'Dynamisches Spielformat, bei dem das System Partner und Gegner basierend auf Niveau und aktuellen Ergebnissen auswählt.',
+    formatMixedMexicanoDesc: 'MEXICANO in festen Paaren. Jedes Paar muss aus einer Frau und einem Mann bestehen.',
+    formatTeamMexicanoDesc: 'Einfach MEXICANO in festen Paaren.',
 
     setupTitle: 'Turnier-Einrichtung',
     stepFormat: 'Format',
@@ -640,6 +654,8 @@ const de: Translations = {
     podium: 'Podium',
     finalStandings: 'Endstand',
     matchHistory: 'Spielverlauf',
+    expand: 'Aufklappen',
+    collapse: 'Zuklappen',
     shareResults: 'Ergebnisse teilen',
     linkCopied: 'Link kopiert!',
     shareDescription: 'Teile einen Link mit den Turnierergebnissen',
@@ -748,16 +764,18 @@ const ua: Translations = {
     backToHome: 'Головна',
     language: 'Мова',
 
-    formatAmericano: 'Американо',
+    formatAmericano: 'АМЕРИКАНО',
     formatMixedAmericano: 'Змішане Американо',
     formatTeamAmericano: 'Командне Американо',
-    formatMexicano: 'Мексикано',
-    formatTeamMexicano: 'Командне Мексикано',
-    formatAmericanoDesc: 'Класичний формат — кожен грає з кожним по колу. Індивідуальний залік.',
+    formatMexicano: 'МЕКСИКАНО',
+    formatMixedMexicano: 'МЕКСИКАНО МІКСТ',
+    formatTeamMexicano: 'МЕКСИКАНО ДУЕТ',
+    formatAmericanoDesc: 'Динамічний формат гри, де система випадково вибирає партнерів та суперників.',
     formatMixedAmericanoDesc: 'Пари завжди складаються з чоловіка та жінки. Індивідуальний залік.',
     formatTeamAmericanoDesc: 'Постійні команди з 2 гравців. Командний залік.',
-    formatMexicanoDesc: 'Динамічні пари на основі рейтингу. Чим краще граєш, тим сильніші суперники.',
-    formatTeamMexicanoDesc: 'Постійні команди — матчі на основі поточного рейтингу команд.',
+    formatMexicanoDesc: 'Динамічний формат гри, де система вибирає партнерів та суперників на основі їхнього рівня та останніх результатів.',
+    formatMixedMexicanoDesc: 'МЕКСИКАНО у постійних парах. Кожна пара має складатися з однієї жінки та одного чоловіка.',
+    formatTeamMexicanoDesc: 'Просто МЕКСИКАНО у постійних парах.',
 
     setupTitle: 'Налаштування турніру',
     stepFormat: 'Формат',
@@ -818,6 +836,8 @@ const ua: Translations = {
     podium: 'Подіум',
     finalStandings: 'Підсумкова таблиця',
     matchHistory: 'Історія матчів',
+    expand: 'Розгорнути',
+    collapse: 'Згорнути',
     shareResults: 'Поділитися результатами',
     linkCopied: 'Посилання скопійовано!',
     shareDescription: 'Поділіться посиланням з результатами турніру',

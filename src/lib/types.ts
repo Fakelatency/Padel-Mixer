@@ -7,6 +7,7 @@ export type TournamentFormat =
     | 'mixedAmericano'
     | 'teamAmericano'
     | 'mexicano'
+    | 'mixedMexicano'
     | 'teamMexicano';
 
 export type ScoringSystem = 16 | 21 | 24 | 32;

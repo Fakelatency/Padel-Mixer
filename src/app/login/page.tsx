@@ -8,6 +8,8 @@ import { brand } from '@/lib/brand';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+
 export default function LoginPage() {
     const { t } = useApp();
     const router = useRouter();
@@ -45,7 +47,7 @@ export default function LoginPage() {
                 <div className="text-center mb-8 animate-fade-in">
                     <div className="relative inline-block mb-4">
                         <Image
-                            src={brand.logoPath}
+                            src={`${BASE}${brand.logoPath}`}
                             alt={brand.clubName}
                             width={220}
                             height={60}

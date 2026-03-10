@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Padel Mixer — Brand Configurator</title>
+  <title>Padel Mixer — Konfigurator Marki</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -693,8 +693,8 @@
   <!-- ─── Top Bar ──────────────────────────────────── -->
   <div class="topbar">
     <div style="display:flex;align-items:baseline;">
-      <span class="topbar-title">🎾 Brand Configurator</span>
-      <span class="topbar-subtitle">Padel Mixer White-Label Tool</span>
+      <span class="topbar-title">🎾 Konfigurator Marki</span>
+      <span class="topbar-subtitle">Padel Mixer — narzędzie White-Label</span>
     </div>
     <button class="btn-copy" id="btnCopy" onclick="copyBrandTs()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
@@ -702,7 +702,7 @@
         <rect x="5" y="5" width="9" height="9" rx="1.5" />
         <path d="M3 11V3a1 1 0 0 1 1-1h8" />
       </svg>
-      Copy brand.ts
+      Kopiuj brand.ts
     </button>
   </div>
 
@@ -714,74 +714,74 @@
 
       <!-- Identity -->
       <div class="section">
-        <div class="section-title">Identity</div>
+        <div class="section-title">Tożsamość</div>
         <div class="field">
-          <label>Club Name</label>
+          <label>Nazwa klubu</label>
           <input type="text" id="clubName" value="Baza Padel Club" oninput="updatePreview()">
         </div>
         <div class="field">
-          <label>App Title</label>
+          <label>Tytuł aplikacji</label>
           <input type="text" id="appTitle" value="Baza Padel Tournament" oninput="updatePreview()">
         </div>
         <div class="field">
-          <label>App Description</label>
+          <label>Opis aplikacji</label>
           <input type="text" id="appDesc" value="Aplikacja do organizacji turniejów padel." oninput="updatePreview()">
         </div>
       </div>
 
       <!-- Assets -->
       <div class="section">
-        <div class="section-title">Assets</div>
+        <div class="section-title">Zasoby</div>
         <div class="upload-row">
           <div>
             <label
               style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">Logo
-              (header & hero)</label>
+              (nagłówek i strona główna)</label>
             <div class="upload-zone" id="logoZone" onclick="document.getElementById('logoInput').click()">
               <input type="file" id="logoInput" accept="image/*" onchange="handleUpload('logo', this)">
               <span class="icon">🖼️</span>
-              <span class="label">Drop or click</span>
-              <span class="sublabel">PNG / SVG recommended</span>
+              <span class="label">Upuść lub kliknij</span>
+              <span class="sublabel">Zalecany PNG / SVG</span>
               <button class="btn-clear" onclick="event.stopPropagation(); clearUpload('logo')">✕</button>
             </div>
           </div>
           <div>
             <label
-              style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">Signet
-              (icon / watermark)</label>
+              style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">Sygnet
+              (ikona / znak wodny)</label>
             <div class="upload-zone" id="signetZone" onclick="document.getElementById('signetInput').click()">
               <input type="file" id="signetInput" accept="image/*" onchange="handleUpload('signet', this)">
               <span class="icon">⭐</span>
-              <span class="label">Drop or click</span>
-              <span class="sublabel">Square PNG recommended</span>
+              <span class="label">Upuść lub kliknij</span>
+              <span class="sublabel">Zalecany kwadratowy PNG</span>
               <button class="btn-clear" onclick="event.stopPropagation(); clearUpload('signet')">✕</button>
             </div>
           </div>
         </div>
         <div class="field" style="margin-top:14px;">
-          <label>Logo Filename (in /public/)</label>
+          <label>Nazwa pliku logo (w /public/)</label>
           <input type="text" id="logoFilename" value="/baza-padel-logo.png" oninput="updatePreview()">
         </div>
         <div class="field">
-          <label>Signet Filename (in /public/)</label>
+          <label>Nazwa pliku sygnetu (w /public/)</label>
           <input type="text" id="signetFilename" value="/baza-padel-sygnet.png" oninput="updatePreview()">
         </div>
         <div class="field">
-          <label>Favicon Filename (in /public/)</label>
+          <label>Nazwa pliku favicon (w /public/)</label>
           <input type="text" id="faviconFilename" value="/logo.jpg" oninput="updatePreview()">
         </div>
       </div>
 
       <!-- Typography -->
       <div class="section">
-        <div class="section-title">Typography</div>
+        <div class="section-title">Typografia</div>
         <div class="field">
-          <label>Font Family</label>
+          <label>Rodzina czcionek</label>
           <input type="text" id="fontFamily" value="'Inter', system-ui, -apple-system, sans-serif"
             oninput="updatePreview()">
         </div>
         <div class="field">
-          <label>Google Fonts URL</label>
+          <label>Adres URL Google Fonts</label>
           <input type="url" id="fontUrl"
             value="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
             oninput="updatePreview()">
@@ -790,91 +790,92 @@
 
       <!-- Primary Colors -->
       <div class="section">
-        <div class="section-title">Primary Palette (Background)</div>
+        <div class="section-title">Paleta główna (tło)</div>
         <div class="color-grid" id="primaryColors"></div>
         <button class="btn-auto" onclick="autoGeneratePrimary()">
-          ✨ Auto-generate from darkest shade
+          ✨ Generuj z najciemniejszego odcienia
         </button>
       </div>
 
       <!-- Accent Colors -->
       <div class="section">
-        <div class="section-title">Accent Palette (CTA / Highlights)</div>
+        <div class="section-title">Paleta akcentowa (CTA / Wyróżnienia)</div>
         <div class="color-grid" id="accentColors"></div>
         <button class="btn-auto" onclick="autoGenerateAccent()">
-          ✨ Auto-generate from main accent
+          ✨ Generuj z głównego akcentu
         </button>
       </div>
 
       <!-- Court Colors -->
       <div class="section">
-        <div class="section-title">Court Card Colors</div>
+        <div class="section-title">Kolory karty kortu</div>
         <div class="color-grid" id="courtColors"></div>
       </div>
 
       <!-- Semantic Colors -->
       <div class="section">
-        <div class="section-title">Semantic Colors</div>
+        <div class="section-title">Kolory semantyczne</div>
         <div class="color-grid" id="semanticColors"></div>
       </div>
 
       <!-- Icons / Emojis -->
       <div class="section">
-        <div class="section-title">Icons / Emojis</div>
-        <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Format
-          Icons</label>
+        <div class="section-title">Ikony / Emoji</div>
+        <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Ikony
+          formatów</label>
         <div class="emoji-grid" id="formatIcons">
           <div class="emoji-field"><label>Americano</label><input type="text" maxlength="4" value="🎾"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Mixed</label><input type="text" maxlength="4" value="👫"
+          <div class="emoji-field"><label>Mieszany</label><input type="text" maxlength="4" value="👫"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Team</label><input type="text" maxlength="4" value="👥"
+          <div class="emoji-field"><label>Drużynowy</label><input type="text" maxlength="4" value="👥"
               oninput="updateIconState()"></div>
           <div class="emoji-field"><label>Mexicano</label><input type="text" maxlength="4" value="🌮"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Team Mex.</label><input type="text" maxlength="4" value="🏆"
+          <div class="emoji-field"><label>Druż. Mex.</label><input type="text" maxlength="4" value="🏆"
               oninput="updateIconState()"></div>
         </div>
         <label
           style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 8px;">Podium</label>
         <div class="emoji-grid" id="podiumIcons">
-          <div class="emoji-field"><label>1st (trophy)</label><input type="text" maxlength="4" value="🏆"
+          <div class="emoji-field"><label>1. (trofeum)</label><input type="text" maxlength="4" value="🏆"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>2nd</label><input type="text" maxlength="4" value="🥈"
+          <div class="emoji-field"><label>2. miejsce</label><input type="text" maxlength="4" value="🥈"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>3rd</label><input type="text" maxlength="4" value="🥉"
+          <div class="emoji-field"><label>3. miejsce</label><input type="text" maxlength="4" value="🥉"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Place 1</label><input type="text" maxlength="4" value="🥇"
+          <div class="emoji-field"><label>Lokata 1</label><input type="text" maxlength="4" value="🥇"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Place 2</label><input type="text" maxlength="4" value="🥈"
+          <div class="emoji-field"><label>Lokata 2</label><input type="text" maxlength="4" value="🥈"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Place 3</label><input type="text" maxlength="4" value="🥉"
-              oninput="updateIconState()"></div>
-        </div>
-        <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 8px;">Tabs &
-          Status</label>
-        <div class="emoji-grid" id="tabIcons">
-          <div class="emoji-field"><label>Tab Matches</label><input type="text" maxlength="4" value="🎾"
-              oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Tab Leader</label><input type="text" maxlength="4" value="🏆"
-              oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>LIVE text</label><input type="text" maxlength="6" value="LIVE"
-              oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Completed</label><input type="text" maxlength="4" value="✓"
-              oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Setup</label><input type="text" maxlength="4" value="⚙"
+          <div class="emoji-field"><label>Lokata 3</label><input type="text" maxlength="4" value="🥉"
               oninput="updateIconState()"></div>
         </div>
         <label
-          style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 8px;">Misc</label>
+          style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 8px;">Zakładki
+          i statusy</label>
+        <div class="emoji-grid" id="tabIcons">
+          <div class="emoji-field"><label>Zak. mecze</label><input type="text" maxlength="4" value="🎾"
+              oninput="updateIconState()"></div>
+          <div class="emoji-field"><label>Zak. ranking</label><input type="text" maxlength="4" value="🏆"
+              oninput="updateIconState()"></div>
+          <div class="emoji-field"><label>Tekst LIVE</label><input type="text" maxlength="6" value="LIVE"
+              oninput="updateIconState()"></div>
+          <div class="emoji-field"><label>Zakończony</label><input type="text" maxlength="4" value="✓"
+              oninput="updateIconState()"></div>
+          <div class="emoji-field"><label>Ustawienia</label><input type="text" maxlength="4" value="⚙"
+              oninput="updateIconState()"></div>
+        </div>
+        <label
+          style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 8px;">Różne</label>
         <div class="emoji-grid" id="miscIcons">
-          <div class="emoji-field"><label>Tournament</label><input type="text" maxlength="4" value="🏆"
+          <div class="emoji-field"><label>Turniej</label><input type="text" maxlength="4" value="🏆"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Error</label><input type="text" maxlength="4" value="😕"
+          <div class="emoji-field"><label>Błąd</label><input type="text" maxlength="4" value="😕"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Delete</label><input type="text" maxlength="4" value="✕"
+          <div class="emoji-field"><label>Usuń</label><input type="text" maxlength="4" value="✕"
               oninput="updateIconState()"></div>
-          <div class="emoji-field"><label>Checkmark</label><input type="text" maxlength="4" value="✓"
+          <div class="emoji-field"><label>Ptaszek</label><input type="text" maxlength="4" value="✓"
               oninput="updateIconState()"></div>
           <div class="emoji-field"><label>Start</label><input type="text" maxlength="4" value="🎾"
               oninput="updateIconState()"></div>
@@ -885,7 +886,7 @@
 
     <!-- Preview -->
     <div class="preview-panel">
-      <div class="preview-label">Live Preview</div>
+      <div class="preview-label">Podgląd na żywo</div>
       <div class="preview-frame" id="previewFrame">
         <!-- Rendered by JS -->
       </div>
@@ -893,7 +894,7 @@
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast">✓ brand.ts copied to clipboard!</div>
+  <div class="toast" id="toast">✓ brand.ts skopiowany do schowka!</div>
 
   <script>
     // ─── State ──────────────────────────────────────
@@ -1157,9 +1158,9 @@
       ${signetWatermark}
       <div style="position:relative;z-index:1;">
         ${logoImgHero}
-        <div class="p-hero-sub" style="color:${p[300]}">Americano • Mexicano • Mixed • Team</div>
+        <div class="p-hero-sub" style="color:${p[300]}">Americano • Mexicano • Mieszany • Drużynowy</div>
         <button class="p-cta" style="background:linear-gradient(135deg,${a[500]},${a[600]});color:${p[950]};">
-          + New Tournament
+          + Nowy turniej
         </button>
       </div>
     </div>
@@ -1169,16 +1170,16 @@
       <div class="p-card" style="background:${p[800]}99;border-color:${p[300]}25;">
         <span class="p-card-icon">${state.icons.formats.americano}</span>
         <div style="flex:1;">
-          <div class="p-card-title">Evening Americano</div>
-          <div class="p-card-meta" style="color:${p[300]}">Americano • 8 players • 2 courts</div>
+          <div class="p-card-title">Wieczorny Americano</div>
+          <div class="p-card-meta" style="color:${p[300]}">Americano • 8 graczy • 2 korty</div>
         </div>
         <span class="p-badge" style="background:${state.semantic.success}25;color:#4ade80;border:1px solid ${state.semantic.success}40;">${state.icons.status.live}</span>
       </div>
       <div class="p-card" style="background:${p[800]}99;border-color:${p[300]}25;">
         <span class="p-card-icon">${state.icons.formats.mexicano}</span>
         <div style="flex:1;">
-          <div class="p-card-title">Weekend Mexicano</div>
-          <div class="p-card-meta" style="color:${p[300]}">Mexicano • 12 players • 3 courts</div>
+          <div class="p-card-title">Weekendowy Mexicano</div>
+          <div class="p-card-meta" style="color:${p[300]}">Mexicano • 12 graczy • 3 korty</div>
         </div>
         <span class="p-badge" style="background:${p[300]}20;color:${p[200]};border:1px solid ${p[300]}30;">${state.icons.status.completed}</span>
       </div>
@@ -1192,13 +1193,13 @@
         ${courtSignet}
         <div class="p-court-content">
           <div>
-            <div style="font-size:0.65rem;opacity:0.7;">Team A</div>
-            <div>Alice & Bob</div>
+            <div style="font-size:0.65rem;opacity:0.7;">Drużyna A</div>
+            <div>Ala i Bartek</div>
           </div>
           <div class="p-court-score">12 : 8</div>
           <div style="text-align:right;">
-            <div style="font-size:0.65rem;opacity:0.7;">Team B</div>
-            <div>Carol & Dave</div>
+            <div style="font-size:0.65rem;opacity:0.7;">Drużyna B</div>
+            <div>Celina i Dawid</div>
           </div>
         </div>
       </div>
@@ -1207,7 +1208,7 @@
     <!-- Loading Spinner -->
     <div class="p-spinner-section">
       ${spinnerSignet}
-      <div style="font-size:0.72rem;color:${p[400]};margin-top:8px;">Loading...</div>
+      <div style="font-size:0.72rem;color:${p[400]};margin-top:8px;">Ładowanie...</div>
     </div>
 
     <!-- Footer -->

@@ -94,8 +94,14 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
     const handleScore1Change = (val: number) => {
         const s1 = Math.max(0, Math.min(tournament.scoringSystem, val));
+        const s2 = tournament.scoringSystem - s1;
         setTempScore1(s1);
-        setTempScore2(tournament.scoringSystem - s1);
+        setTempScore2(s2);
+        // Auto-save when a non-zero score is selected
+        if (s1 > 0 && editingMatch && isScoreValid(s1, s2, tournament.scoringSystem)) {
+            updateScore(editingMatch, s1, s2);
+            setEditingMatch(null);
+        }
     };
 
     const saveScore = () => {
@@ -131,9 +137,8 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
     return (
         <>
-            <div className="court-bg" />
             <Header />
-            <main className="max-w-4xl mx-auto px-4 py-6">
+            <main className="max-w-6xl mx-auto px-4 py-6 relative z-10">
                 {/* Tournament Header */}
                 <div className="text-center mb-6 animate-fade-in">
                     <h1 className="text-2xl font-bold text-white mb-1">{tournament.name}</h1>
@@ -180,7 +185,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                 {t.round} {tournament.currentRound}
                             </h3>
 
-                            <div className="space-y-3">
+                            <div className={`grid grid-cols-1 gap-6 md:gap-8 ${currentRound?.matches.length === 1 ? 'max-w-2xl mx-auto' : 'lg:grid-cols-2'}`}>
                                 {currentRound?.matches.map((match, idx) => (
                                     <div
                                         key={match.id}
@@ -199,57 +204,56 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                     <div className="court-line-center-right" />
                                                 </div>
                                                 {/* <div className="court-card-logo" /> */}
-                                                <div className="court-card-content">
+                                                <div className="court-card-content" style={{ position: 'absolute', inset: 0 }}>
                                                     {/* Court label */}
-                                                    <div className="text-center mb-1 px-2">
-                                                        <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
+                                                    <div className="absolute top-2 left-0 right-0 text-center z-20">
+                                                        <span className="text-xs font-bold text-white/80 uppercase tracking-widest bg-black/30 px-2 py-0.5 rounded-md backdrop-blur-sm">
                                                             {t.court} {match.court}
                                                         </span>
                                                     </div>
 
-                                                    <div className="flex items-center gap-4 justify-center my-4">
-                                                        {/* Team 1 */}
-                                                        <div className="flex-1 text-center">
-                                                            <div className="text-sm font-bold text-white mb-3 drop-shadow-md">
-                                                                {match.team1.playerIds.map(getPlayerName).join(' & ')}
-                                                            </div>
-                                                            <div className="flex justify-center">
-                                                                <select
-                                                                    value={tempScore1}
-                                                                    onChange={(e) => handleScore1Change(Number(e.target.value))}
-                                                                    className="score-picker-select"
-                                                                >
-                                                                    {scoreOptions.map((v) => (
-                                                                        <option key={v} value={v}>{v}</option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                                    {/* VS label */}
+                                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                                                        <span className="text-white/30 font-black text-xl">VS</span>
+                                                    </div>
 
-                                                        <div className="flex flex-col items-center gap-1">
-                                                            <span className="text-white/50 font-black text-xl">vs</span>
+                                                    {/* Team 1 (Left Half) */}
+                                                    <div className="absolute left-0 top-0 bottom-0 w-1/2 flex flex-col items-center justify-center gap-3 sm:gap-4 z-10 px-2">
+                                                        <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                            {getPlayerName(match.team1.playerIds[0])}
                                                         </div>
-
-                                                        {/* Team 2 */}
-                                                        <div className="flex-1 text-center">
-                                                            <div className="text-sm font-bold text-white mb-3 drop-shadow-md">
-                                                                {match.team2.playerIds.map(getPlayerName).join(' & ')}
-                                                            </div>
-                                                            <div className="flex justify-center">
-                                                                <div className="score-auto">
-                                                                    {tempScore2}
-                                                                </div>
-                                                            </div>
+                                                        <select
+                                                            value={tempScore1}
+                                                            onChange={(e) => handleScore1Change(Number(e.target.value))}
+                                                            className="score-picker-select shadow-lg shadow-black/20"
+                                                        >
+                                                            {scoreOptions.map((v) => (
+                                                                <option key={v} value={v}>{v}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                            {match.team1.playerIds[1] ? getPlayerName(match.team1.playerIds[1]) : '\u00A0'}
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex gap-2 justify-center mt-4">
-                                                        <button onClick={saveScore} className="btn-primary py-2 px-6 text-sm">
-                                                            {brand.icons.misc.checkmark} {t.saveScore}
-                                                        </button>
+                                                    {/* Team 2 (Right Half) */}
+                                                    <div className="absolute right-0 top-0 bottom-0 w-1/2 flex flex-col items-center justify-center gap-3 sm:gap-4 z-10 px-2">
+                                                        <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                            {getPlayerName(match.team2.playerIds[0])}
+                                                        </div>
+                                                        <div className="score-auto shadow-lg shadow-black/20">
+                                                            {tempScore2}
+                                                        </div>
+                                                        <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                            {match.team2.playerIds[1] ? getPlayerName(match.team2.playerIds[1]) : '\u00A0'}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Cancel button */}
+                                                    <div className="absolute bottom-2 left-0 right-0 flex gap-2 justify-center z-20">
                                                         <button
                                                             onClick={() => setEditingMatch(null)}
-                                                            className="btn-ghost py-2 px-4 text-sm text-white/70 hover:text-white"
+                                                            className="btn-ghost py-1 px-3 text-xs text-white/70 hover:text-white bg-black/30 border border-white/10 shadow-xl shadow-black/30"
                                                         >
                                                             {t.cancel}
                                                         </button>
@@ -262,7 +266,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                 onClick={() => startEditing(match)}
                                                 className="w-full text-left"
                                             >
-                                                <div className="court-card" style={{ minHeight: '140px', padding: '14px 12px' }}>
+                                                <div className="court-card" style={{ padding: '14px 12px' }}>
                                                     <div className="court-lines">
                                                         <div className="court-net" />
                                                         <div className="court-line-service-left" />
@@ -271,29 +275,30 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                         <div className="court-line-center-right" />
                                                     </div>
                                                     <div className="court-card-logo" />
-                                                    <div className="court-card-content">
+                                                    <div className="court-card-content hover:bg-white/5 transition-colors" style={{ position: 'absolute', inset: 0 }}>
                                                         {/* Court label + completed badge */}
-                                                        <div className="flex items-center justify-between mb-2 px-1">
-                                                            <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
+                                                        <div className="absolute top-2 left-2 right-2 flex items-center justify-between z-20">
+                                                            <span className="text-xs font-bold text-white/80 uppercase tracking-widest bg-black/30 px-2 py-0.5 rounded-md backdrop-blur-sm">
                                                                 {t.court} {match.court}
                                                             </span>
                                                             {match.status === 'completed' && (
-                                                                <span className="text-xs text-green-300 font-medium bg-green-500/20 px-2 py-0.5 rounded-full">{brand.icons.status.completed}</span>
+                                                                <span className="text-xs text-green-300 font-medium bg-green-500/20 px-2 py-0.5 rounded-full backdrop-blur-sm">{brand.icons.status.completed}</span>
                                                             )}
                                                         </div>
 
-                                                        <div className="flex items-center gap-3 justify-center">
-                                                            {/* Team 1 */}
-                                                            <div className="flex-1 text-right">
-                                                                <span className="text-sm font-bold text-white drop-shadow-md">
-                                                                    {match.team1.playerIds.map(getPlayerName).join(' & ')}
-                                                                </span>
-                                                            </div>
+                                                        {/* VS label */}
+                                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                                                            <span className="text-white/30 font-black text-sm sm:text-base">VS</span>
+                                                        </div>
 
-                                                            {/* Scores */}
-                                                            <div className="flex items-center gap-1.5">
+                                                        {/* Team 1 (Left Half) */}
+                                                        <div className="absolute left-0 top-0 bottom-0 w-1/2 flex flex-col items-center justify-center gap-3 sm:gap-4 z-10 px-2">
+                                                            <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1 bg-black/40 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                                {getPlayerName(match.team1.playerIds[0])}
+                                                            </div>
+                                                            <div className={`flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 border border-white/10 backdrop-blur-md shadow-inner ${match.status === 'completed' ? (match.score1! > match.score2! ? 'ring-2 ring-yellow-400/50 bg-yellow-400/10' : '') : ''}`}>
                                                                 <span
-                                                                    className={`text-2xl font-black tabular-nums drop-shadow-md ${match.status === 'completed'
+                                                                    className={`text-xl sm:text-3xl font-black tabular-nums drop-shadow-md ${match.status === 'completed'
                                                                         ? match.score1! > match.score2!
                                                                             ? 'text-yellow-300'
                                                                             : 'text-white'
@@ -302,9 +307,20 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                                 >
                                                                     {match.score1 ?? '-'}
                                                                 </span>
-                                                                <span className="text-white/40 font-bold">:</span>
+                                                            </div>
+                                                            <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1 bg-black/40 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                                {match.team1.playerIds[1] ? getPlayerName(match.team1.playerIds[1]) : '\u00A0'}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Team 2 (Right Half) */}
+                                                        <div className="absolute right-0 top-0 bottom-0 w-1/2 flex flex-col items-center justify-center gap-3 sm:gap-4 z-10 px-2">
+                                                            <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1 bg-black/40 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                                {getPlayerName(match.team2.playerIds[0])}
+                                                            </div>
+                                                            <div className={`flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black/30 border border-white/10 backdrop-blur-md shadow-inner ${match.status === 'completed' ? (match.score2! > match.score1! ? 'ring-2 ring-yellow-400/50 bg-yellow-400/10' : '') : ''}`}>
                                                                 <span
-                                                                    className={`text-2xl font-black tabular-nums drop-shadow-md ${match.status === 'completed'
+                                                                    className={`text-xl sm:text-3xl font-black tabular-nums drop-shadow-md ${match.status === 'completed'
                                                                         ? match.score2! > match.score1!
                                                                             ? 'text-yellow-300'
                                                                             : 'text-white'
@@ -314,12 +330,8 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                                     {match.score2 ?? '-'}
                                                                 </span>
                                                             </div>
-
-                                                            {/* Team 2 */}
-                                                            <div className="flex-1 text-left">
-                                                                <span className="text-sm font-bold text-white drop-shadow-md">
-                                                                    {match.team2.playerIds.map(getPlayerName).join(' & ')}
-                                                                </span>
+                                                            <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1 bg-black/40 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
+                                                                {match.team2.playerIds[1] ? getPlayerName(match.team2.playerIds[1]) : '\u00A0'}
                                                             </div>
                                                         </div>
                                                     </div>

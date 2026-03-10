@@ -4,18 +4,22 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
+import Image from 'next/image';
 import { TournamentFormat, ScoringSystem, Player, Team, Gender, RoundMode } from '@/lib/types';
 import { brand } from '@/lib/brand';
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
 type Step = 'format' | 'players' | 'settings' | 'review';
 const STEPS: Step[] = ['format', 'players', 'settings', 'review'];
 
-const FORMAT_OPTIONS: { value: TournamentFormat; icon: string }[] = [
-    { value: 'americano', icon: brand.icons.formats.americano || '🎾' },
-    { value: 'mixedAmericano', icon: brand.icons.formats.mixedAmericano || '👫' },
-    { value: 'teamAmericano', icon: brand.icons.formats.teamAmericano || '👥' },
-    { value: 'mexicano', icon: brand.icons.formats.mexicano || '🌮' },
-    { value: 'teamMexicano', icon: brand.icons.formats.teamMexicano || '🏆' },
+const FORMAT_OPTIONS: { value: TournamentFormat }[] = [
+    { value: 'americano' },
+    { value: 'mixedAmericano' },
+    { value: 'teamAmericano' },
+    { value: 'mexicano' },
+    { value: 'teamMexicano' },
+    { value: 'mixedMexicano' },
 ];
 
 const SCORING_OPTIONS: ScoringSystem[] = [16, 21, 24, 32];
@@ -96,7 +100,7 @@ export default function NewTournamentPage() {
     }, [userSearch, playerMode]);
 
     const isTeamFormat = format === 'teamAmericano' || format === 'teamMexicano';
-    const isMixedFormat = format === 'mixedAmericano';
+    const isMixedFormat = format === 'mixedAmericano' || format === 'mixedMexicano';
 
     const getFormatLabel = (f: TournamentFormat) => {
         const map: Record<TournamentFormat, string> = {
@@ -105,8 +109,9 @@ export default function NewTournamentPage() {
             teamAmericano: t.formatTeamAmericano,
             mexicano: t.formatMexicano,
             teamMexicano: t.formatTeamMexicano,
+            mixedMexicano: t.formatMixedMexicano,
         };
-        return map[f];
+        return map[f] || f;
     };
 
     const getFormatDesc = (f: TournamentFormat) => {
@@ -116,8 +121,9 @@ export default function NewTournamentPage() {
             teamAmericano: t.formatTeamAmericanoDesc,
             mexicano: t.formatMexicanoDesc,
             teamMexicano: t.formatTeamMexicanoDesc,
+            mixedMexicano: t.formatMixedMexicanoDesc,
         };
-        return map[f];
+        return map[f] || '';
     };
 
     const stepLabel = (s: Step) => {
@@ -256,7 +262,7 @@ export default function NewTournamentPage() {
     return (
         <>
             <Header />
-            <main className="max-w-3xl mx-auto px-4 py-8">
+            <main className="max-w-3xl mx-auto px-4 min-h-[calc(100vh-64px)] flex flex-col justify-center py-8">
                 {/* Step Indicator */}
                 <div className="flex items-center justify-center gap-2 mb-8 animate-fade-in">
                     {STEPS.map((s, i) => (
@@ -309,8 +315,16 @@ export default function NewTournamentPage() {
                                             : ''
                                             }`}
                                     >
-                                        <div className="flex items-start gap-4">
-                                            <span className="text-3xl">{opt.icon}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-8 h-8 shrink-0">
+                                                <Image
+                                                    src={`${BASE}${brand.signetPath}`}
+                                                    width={32}
+                                                    height={32}
+                                                    alt="Icon"
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            </div>
                                             <div>
                                                 <h3 className="font-bold text-lg text-white mb-1">
                                                     {getFormatLabel(opt.value)}

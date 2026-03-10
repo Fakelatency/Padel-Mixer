@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+
 export default function Header() {
     const { t, locale, setLocale, user } = useApp();
     const router = useRouter();
@@ -23,7 +25,7 @@ export default function Header() {
                 <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
                     <div className="h-8 sm:h-10 transition-transform group-hover:scale-105">
                         <Image
-                            src={brand.logoPath}
+                            src={`${BASE}${brand.logoPath}`}
                             alt={brand.clubName}
                             width={120}
                             height={32}

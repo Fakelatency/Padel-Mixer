@@ -86,6 +86,7 @@ export interface Translations {
     won: string;
     lost: string;
     diff: string;
+    pauses: string;
 
     // Results
     results: string;
@@ -283,6 +284,7 @@ const pl: Translations = {
     won: 'Wygrane',
     lost: 'Przegrane',
     diff: '+/-',
+    pauses: 'Pauzy',
 
     results: 'Wyniki',
     tournamentResults: 'Wyniki turnieju',
@@ -465,6 +467,7 @@ const en: Translations = {
     won: 'Won',
     lost: 'Lost',
     diff: '+/-',
+    pauses: 'Pauses',
 
     results: 'Results',
     tournamentResults: 'Tournament Results',
@@ -647,6 +650,7 @@ const de: Translations = {
     won: 'Gewonnen',
     lost: 'Verloren',
     diff: '+/-',
+    pauses: 'Pausen',
 
     results: 'Ergebnisse',
     tournamentResults: 'Turnierergebnisse',
@@ -829,6 +833,7 @@ const ua: Translations = {
     won: 'Виграно',
     lost: 'Програно',
     diff: '+/-',
+    pauses: 'Паузи',
 
     results: 'Результати',
     tournamentResults: 'Результати турніру',

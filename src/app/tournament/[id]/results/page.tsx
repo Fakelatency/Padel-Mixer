@@ -206,6 +206,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                     <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase">{t.played}</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase">{t.won}</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase">{t.lost}</th>
+                                    <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase">{t.pauses}</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-navy-400 uppercase">{t.diff}</th>
                                 </tr>
                             </thead>
@@ -238,6 +239,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                         <td className="px-4 py-3 text-center text-navy-300">{s.matchesPlayed}</td>
                                         <td className="px-4 py-3 text-center text-navy-300">{s.matchesWon}</td>
                                         <td className="px-4 py-3 text-center text-navy-300">{s.matchesLost}</td>
+                                        <td className="px-4 py-3 text-center text-navy-400">{s.sitOuts > 0 ? s.sitOuts : '-'}</td>
                                         <td className="px-4 py-3 text-center">
                                             <span
                                                 className={`font-medium ${s.pointDifference > 0 ? 'text-success' : s.pointDifference < 0 ? 'text-error' : 'text-navy-400'

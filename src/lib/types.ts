@@ -82,6 +82,7 @@ export interface PlayerStats {
     matchesPlayed: number;
     matchesWon: number;
     matchesLost: number;
+    sitOuts: number;
     partners: string[];
     pointDifference: number;
 }

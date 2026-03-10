@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Image from 'next/image';
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
 interface PublicProfile {
     user: {
@@ -203,7 +206,9 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
                                                 onClick={() => router.push(`/tournament/${tournament.tournamentId}/results`)}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className="text-2xl">{formatIcons[tournament.format] || brand.icons.formats.americano}</div>
+                                                    <div className="w-8 h-8 rounded-lg shrink-0">
+                                                        <Image src={`${BASE}${brand.signetPath}`} width={32} height={32} alt="Icon" className="w-full h-full object-contain" />
+                                                    </div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <h3 className="font-bold text-white truncate">{tournament.tournamentName}</h3>

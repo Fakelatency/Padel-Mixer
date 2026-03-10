@@ -60,7 +60,6 @@ function SharedResultsContent() {
 
     return (
         <div className="min-h-screen">
-            <div className="court-bg" />
             <div className="relative z-10">
                 {/* Header */}
                 <header className="sticky top-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-navy-700/30">

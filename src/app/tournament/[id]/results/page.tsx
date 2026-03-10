@@ -10,6 +10,8 @@ import { generateShareableUrl } from '@/lib/share';
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const { t, loadTournamentById, currentTournament } = useApp();
@@ -259,7 +261,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                             onClick={() => setShowAllRounds(!showAllRounds)}
                             className="btn-ghost text-sm"
                         >
-                            {showAllRounds ? '▲ Collapse' : '▼ Expand'}
+                            {showAllRounds ? `▲ ${t.collapse}` : `▼ ${t.expand}`}
                         </button>
                     </div>
 
@@ -308,7 +310,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 {/* Footer with logo */}
                 <div className="text-center py-8 border-t border-navy-800/50 mt-8">
                     <div className="w-12 h-12 mx-auto rounded-xl overflow-hidden bg-white/5 p-2 mb-2 opacity-40">
-                        <Image src={brand.faviconPath} alt={brand.clubName} width={48} height={48} className="w-full h-full object-contain" />
+                        <Image src={`${BASE}${brand.signetPath}`} alt={brand.clubName} width={48} height={48} className="w-full h-full object-contain" />
                     </div>
                     <p className="text-xs text-navy-500">{brand.clubName}</p>
                 </div>

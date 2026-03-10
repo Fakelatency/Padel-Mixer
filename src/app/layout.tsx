@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   title: brand.appTitle,
   description: brand.appDescription,
   icons: {
-    icon: brand.faviconPath,
-    apple: brand.faviconPath,
+    icon: `${BASE}${brand.faviconPath}`,
+    apple: `${BASE}${brand.faviconPath}`,
   },
 };
 

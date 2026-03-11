@@ -6,8 +6,7 @@ import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 interface PublicProfile {
     user: {
@@ -57,7 +56,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ id: st
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
-        fetch(`/padel/api/player/${id}`)
+        fetch(`${BASE}/api/player/${id}`)
             .then((res) => {
                 if (!res.ok) throw new Error('Not found');
                 return res.json();

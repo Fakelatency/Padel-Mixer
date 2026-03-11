@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { brand } from '@/lib/brand';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 export const metadata: Metadata = {
   title: brand.appTitle,

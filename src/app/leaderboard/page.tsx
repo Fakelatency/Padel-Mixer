@@ -6,8 +6,7 @@ import { useApp } from '@/context/AppContext';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { brand } from '@/lib/brand';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'overall';
 type LeaderboardType = 'all' | 'official';

@@ -88,6 +88,7 @@ export function parseShareableData(encoded: string): Tournament | null {
             updatedAt: new Date().toISOString(),
             totalRounds: null,
             rankingStrategy: 'points',
+            finalPairing: '1&4v2&3',
         };
 
         return tournament;

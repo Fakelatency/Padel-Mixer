@@ -112,6 +112,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
         roundMode,
         totalRounds,
         rankingStrategy,
+        finalPairing: settings.finalPairing || '1&4v2&3',
         status: 'active',
         createdAt: now,
         updatedAt: now,
@@ -339,7 +340,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const t = { ...state.currentTournament };
         const standings = calculateStandings(t);
         const nextRoundNumber = t.currentRound + 1;
-        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy);
+        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy, t.finalPairing || '1&4v2&3');
         finalRound.number = nextRoundNumber;
         finalRound.matches = finalRound.matches.map((m) => ({ ...m, round: nextRoundNumber - 1 }));
         t.rounds = [...t.rounds, finalRound];

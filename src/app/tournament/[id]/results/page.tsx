@@ -9,8 +9,7 @@ import { calculateStandings } from '@/lib/scoring';
 import { generateShareableUrl } from '@/lib/share';
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);

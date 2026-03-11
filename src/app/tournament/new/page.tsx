@@ -7,8 +7,7 @@ import Header from '@/components/Header';
 import Image from 'next/image';
 import { TournamentFormat, ScoringSystem, Player, Team, Gender, RoundMode } from '@/lib/types';
 import { brand } from '@/lib/brand';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 type Step = 'format' | 'players' | 'settings' | 'review';
 const STEPS: Step[] = ['format', 'players', 'settings', 'review'];
@@ -42,6 +41,7 @@ export default function NewTournamentPage() {
     const [roundMode, setRoundMode] = useState<RoundMode>('unlimited');
     const [totalRounds, setTotalRounds] = useState<number>(12);
     const [rankingStrategy, setRankingStrategy] = useState<'points' | 'wins'>('points');
+    const [finalPairing, setFinalPairing] = useState<'1&2v3&4' | '1&3v2&4' | '1&4v2&3'>('1&4v2&3');
 
     // Guest / Member player mode
     const [playerMode, setPlayerMode] = useState<'guest' | 'member'>('guest');
@@ -67,6 +67,7 @@ export default function NewTournamentPage() {
                     if (s.roundMode) setRoundMode(s.roundMode);
                     if (s.totalRounds) setTotalRounds(s.totalRounds);
                     if (s.rankingStrategy) setRankingStrategy(s.rankingStrategy);
+                    if (s.finalPairing) setFinalPairing(s.finalPairing);
                     setStep('settings');
                     localStorage.removeItem('padel_repeat_settings');
                 }
@@ -87,7 +88,7 @@ export default function NewTournamentPage() {
         if (searchTimer.current) clearTimeout(searchTimer.current);
         searchTimer.current = setTimeout(async () => {
             try {
-                const res = await fetch(`/padel/api/users/search?q=${encodeURIComponent(userSearch)}`);
+                const res = await fetch(`${BASE}/api/users/search?q=${encodeURIComponent(userSearch)}`);
                 const data = await res.json();
                 setSearchResults(data.users || []);
             } catch {
@@ -248,6 +249,7 @@ export default function NewTournamentPage() {
             roundMode,
             totalRounds: roundMode === 'fixed' ? totalRounds : null,
             rankingStrategy,
+            finalPairing,
         });
         router.push(`/tournament/${tournament.id}`);
     };
@@ -374,7 +376,7 @@ export default function NewTournamentPage() {
 
                                 {/* Guest mode — current text input */}
                                 {playerMode === 'guest' && (
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         <input
                                             type="text"
                                             value={newPlayerName}
@@ -388,7 +390,7 @@ export default function NewTournamentPage() {
                                             <select
                                                 value={newPlayerGender}
                                                 onChange={(e) => setNewPlayerGender(e.target.value as Gender)}
-                                                className="input w-36"
+                                                className="input !w-full sm:!w-40 shrink-0"
                                             >
                                                 <option value="male">♂ {t.male}</option>
                                                 <option value="female">♀ {t.female}</option>
@@ -403,7 +405,7 @@ export default function NewTournamentPage() {
                                 {/* Member mode — search registered users */}
                                 {playerMode === 'member' && (
                                     <div className="relative">
-                                        <div className="flex gap-3">
+                                        <div className="flex flex-col sm:flex-row gap-3">
                                             <input
                                                 type="text"
                                                 value={userSearch}
@@ -416,7 +418,7 @@ export default function NewTournamentPage() {
                                                 <select
                                                     value={newPlayerGender}
                                                     onChange={(e) => setNewPlayerGender(e.target.value as Gender)}
-                                                    className="input w-36"
+                                                    className="input !w-full sm:!w-40 shrink-0"
                                                 >
                                                     <option value="male">♂ {t.male}</option>
                                                     <option value="female">♀ {t.female}</option>
@@ -586,7 +588,7 @@ export default function NewTournamentPage() {
                                         {t.numberOfCourts}
                                     </label>
                                     <div className="flex gap-3">
-                                        {[1, 2, 3, 4].map((n) => (
+                                        {[1, 2, 3, 4, 5].map((n) => (
                                             <button
                                                 key={n}
                                                 onClick={() => setCourts(n)}
@@ -697,6 +699,43 @@ export default function NewTournamentPage() {
                                     </button>
                                 </div>
                             </div>
+
+                            <div className="glass-card-static mt-6 p-5">
+                                <div className="mb-3">
+                                    <label className="block text-sm font-medium text-navy-300">
+                                        {t.finalPairingTitle}
+                                    </label>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <button
+                                        onClick={() => setFinalPairing('1&4v2&3')}
+                                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${finalPairing === '1&4v2&3'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        {t.pairing3}
+                                    </button>
+                                    <button
+                                        onClick={() => setFinalPairing('1&3v2&4')}
+                                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${finalPairing === '1&3v2&4'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        {t.pairing2}
+                                    </button>
+                                    <button
+                                        onClick={() => setFinalPairing('1&2v3&4')}
+                                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${finalPairing === '1&2v3&4'
+                                            ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                            : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                            }`}
+                                    >
+                                        {t.pairing1}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                     )}
@@ -737,6 +776,12 @@ export default function NewTournamentPage() {
                                     <span className="text-navy-300">{t.rankingPriority}</span>
                                     <span className="font-bold text-white">
                                         {rankingStrategy === 'points' ? t.points : t.priorityWins}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center py-2 border-t border-navy-700/50">
+                                    <span className="text-navy-300">{t.finalPairingTitle}</span>
+                                    <span className="font-bold text-white">
+                                        {finalPairing === '1&4v2&3' ? t.pairing3 : finalPairing === '1&3v2&4' ? t.pairing2 : t.pairing1}
                                     </span>
                                 </div>
 

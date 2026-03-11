@@ -9,7 +9,7 @@ import { brand } from '@/lib/brand';
 import { useState } from 'react';
 
 const formatIcons = brand.icons.formats;
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 export default function HomePage() {
   const { t, tournaments, removeTournament } = useApp();

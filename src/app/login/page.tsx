@@ -7,8 +7,7 @@ import { useApp } from '@/context/AppContext';
 import { brand } from '@/lib/brand';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 export default function LoginPage() {
     const { t } = useApp();

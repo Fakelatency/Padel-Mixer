@@ -139,14 +139,15 @@ export function sortStandings(
     });
 }
 
-// ─── Final Americano Round (1&4 vs 2&3) ─────────────────────
-// Creates a final round based on current standings:
-// Rank 1 + Rank 4 vs Rank 2 + Rank 3 (per court group of 4)
+// ─── Final Americano Round ───────────────────────────────────
+// Creates a final round based on current standings.
+// Pairing strategy is configurable: '1&2v3&4', '1&3v2&4', '1&4v2&3'
 export function generateFinalAmericanoRound(
     players: Player[],
     standings: PlayerStats[],
     courts: number,
-    rankingStrategy: 'points' | 'wins' = 'points'
+    rankingStrategy: 'points' | 'wins' = 'points',
+    finalPairing: '1&2v3&4' | '1&3v2&4' | '1&4v2&3' = '1&4v2&3'
 ): Round {
     const roundMatches: Match[] = [];
     const usedInRound = new Set<string>();
@@ -159,9 +160,24 @@ export function generateFinalAmericanoRound(
         const baseIdx = c * 4;
         if (baseIdx + 3 >= orderedIds.length) break;
 
-        // 1st + 4th vs 2nd + 3rd
-        const team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 3]];
-        const team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 2]];
+        // Apply the selected final pairing strategy
+        let team1: string[];
+        let team2: string[];
+        switch (finalPairing) {
+            case '1&2v3&4':
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 1]];
+                team2 = [orderedIds[baseIdx + 2], orderedIds[baseIdx + 3]];
+                break;
+            case '1&3v2&4':
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 2]];
+                team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 3]];
+                break;
+            case '1&4v2&3':
+            default:
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 3]];
+                team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 2]];
+                break;
+        }
 
         team1.forEach((id) => usedInRound.add(id));
         team2.forEach((id) => usedInRound.add(id));

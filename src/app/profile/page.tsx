@@ -7,8 +7,7 @@ import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
 import type { UserStats } from '@/app/api/user/stats/route';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 import { brand } from '@/lib/brand';
 const formatIcons = brand.icons.formats;
@@ -22,7 +21,7 @@ export default function ProfilePage() {
 
     const shareProfile = useCallback(() => {
         if (!user) return;
-        const url = `${window.location.origin}/padel/player/${user.id}`;
+        const url = `${window.location.origin}${BASE}/player/${user.id}`;
         navigator.clipboard.writeText(url).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -37,7 +36,7 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (user) {
-            fetch('/padel/api/user/stats', { credentials: 'include' })
+            fetch(`${BASE}/api/user/stats`, { credentials: 'include' })
                 .then((res) => res.json())
                 .then((data) => {
                     setStats(data);

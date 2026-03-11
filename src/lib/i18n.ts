@@ -133,11 +133,18 @@ export interface Translations {
     roundModeUnlimited: string;
     byePoints: string;
     numberOfRounds: string;
+    totalRounds: string;
 
     // Priority
     rankingPriority: string;
     rankingPriorityDesc: string;
     priorityWins: string;
+
+    // Final Pairing Options
+    finalPairingTitle: string;
+    pairing1: string;
+    pairing2: string;
+    pairing3: string;
     priorityLabel: string;
 
     // Search & pagination
@@ -220,8 +227,8 @@ const pl: Translations = {
     language: 'Język',
 
     formatAmericano: 'AMERICANO',
-    formatMixedAmericano: 'Americano Mieszane',
-    formatTeamAmericano: 'Americano Drużynowe',
+    formatMixedAmericano: 'AMERICANO MIKST',
+    formatTeamAmericano: 'AMERICANO DUET',
     formatMexicano: 'MEXICANO',
     formatMixedMexicano: 'MEXICANO MIKST',
     formatTeamMexicano: 'MEXICANO DUET',
@@ -324,10 +331,16 @@ const pl: Translations = {
     roundModeUnlimited: 'Nielimitowane',
     byePoints: '+11 pkt za pauzę',
     numberOfRounds: 'Liczba rund',
+    totalRounds: 'Liczba Rund',
 
-    rankingPriority: 'Priorytet rankingu i parowania',
-    rankingPriorityDesc: 'Decyduje o kolejności w tabeli i parowaniu w Mexicano.',
+    rankingPriority: 'Priorytet Rankingu',
+    rankingPriorityDesc: 'Zdecyduj, co ważniejsze: zdobyte punkty czy liczba wygranych meczów.',
     priorityWins: 'Wygrane',
+
+    finalPairingTitle: 'Końcowe parowanie',
+    pairing1: '1 & 2 vs 3 & 4',
+    pairing2: '1 & 3 vs 2 & 4',
+    pairing3: '1 & 4 vs 2 & 3',
     priorityLabel: 'Priorytet',
     searchTournaments: 'Szukaj turnieju...',
     filterAll: 'Wszystkie',
@@ -507,10 +520,16 @@ const en: Translations = {
     roundModeUnlimited: 'Unlimited',
     byePoints: '+11 pts bye',
     numberOfRounds: 'Number of rounds',
+    totalRounds: 'Total Rounds',
 
-    rankingPriority: 'Ranking & Pairing Priority',
-    rankingPriorityDesc: 'Determines how leaderboard is sorted and how matches are paired in Mexicano.',
+    rankingPriority: 'Ranking Priority',
+    rankingPriorityDesc: 'Decide what matters more: total points scored or matches won.',
     priorityWins: 'Wins',
+
+    finalPairingTitle: 'Final Pairing',
+    pairing1: '1 & 2 vs 3 & 4',
+    pairing2: '1 & 3 vs 2 & 4',
+    pairing3: '1 & 4 vs 2 & 3',
     priorityLabel: 'Priority',
     searchTournaments: 'Search tournaments...',
     filterAll: 'All',
@@ -690,10 +709,16 @@ const de: Translations = {
     roundModeUnlimited: 'Unbegrenzt',
     byePoints: '+11 Pkt Freilos',
     numberOfRounds: 'Anzahl der Runden',
+    totalRounds: 'Gesamtrunden',
 
-    rankingPriority: 'Ranglisten- & Paarungspriorität',
-    rankingPriorityDesc: 'Bestimmt die Sortierung der Rangliste und die Paarungen im Mexicano.',
+    rankingPriority: 'Ranglisten-Priorität',
+    rankingPriorityDesc: 'Entscheide, was wichtiger ist: erzielte Punkte oder gewonnene Spiele.',
     priorityWins: 'Siege',
+
+    finalPairingTitle: 'Finale Paarung',
+    pairing1: '1 & 2 vs 3 & 4',
+    pairing2: '1 & 3 vs 2 & 4',
+    pairing3: '1 & 4 vs 2 & 3',
     priorityLabel: 'Priorität',
     searchTournaments: 'Turnier suchen...',
     filterAll: 'Alle',
@@ -873,10 +898,16 @@ const ua: Translations = {
     roundModeUnlimited: 'Безліміт',
     byePoints: '+11 очок за пропуск',
     numberOfRounds: 'Кількість раундів',
+    totalRounds: 'Кількість раундів',
 
-    rankingPriority: 'Пріоритет рейтингу та пар',
-    rankingPriorityDesc: 'Визначає сортування таблиці та формування пар у Мексикано.',
+    rankingPriority: 'Пріоритет рейтингу',
+    rankingPriorityDesc: 'Що важливіше: набрані бали чи виграні матчі.',
     priorityWins: 'Перемоги',
+
+    finalPairingTitle: 'Фінальні Пари',
+    pairing1: '1 & 2 vs 3 & 4',
+    pairing2: '1 & 3 vs 2 & 4',
+    pairing3: '1 & 4 vs 2 & 3',
     priorityLabel: 'Пріоритет',
 
     searchTournaments: 'Пошук турніру...',

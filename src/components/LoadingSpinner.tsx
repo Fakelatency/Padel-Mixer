@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 
 interface LoadingSpinnerProps {
     text?: string;

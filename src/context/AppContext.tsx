@@ -71,12 +71,12 @@ function createTournamentData(settings: TournamentSettings): Tournament {
                 rounds = generateTeamAmericanoRounds(settings.teams, settings.players, settings.courts);
                 break;
             case 'mexicano': {
-                const firstRound = generateMexicanoRound(settings.players, [], 1, settings.courts, rankingStrategy);
+                const firstRound = generateMexicanoRound(settings.players, [], 1, settings.courts, rankingStrategy, []);
                 rounds = [firstRound];
                 break;
             }
             case 'teamMexicano': {
-                const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts);
+                const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, []);
                 rounds = [firstRound];
                 break;
             }
@@ -112,6 +112,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
         roundMode,
         totalRounds,
         rankingStrategy,
+        finalPairing: settings.finalPairing || '1&4v2&3',
         status: 'active',
         createdAt: now,
         updatedAt: now,
@@ -306,7 +307,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         if (t.format === 'mexicano') {
             const standings = calculateStandings(t);
-            const newRound = generateMexicanoRound(t.players, standings, nextRoundNumber, t.courts, t.rankingStrategy);
+            const newRound = generateMexicanoRound(t.players, standings, nextRoundNumber, t.courts, t.rankingStrategy, t.rounds);
             t.rounds = [...t.rounds, newRound];
         } else if (t.format === 'teamMexicano') {
             const teamStandings = calculateTeamStandings(t);
@@ -315,7 +316,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 t.players,
                 teamStandings,
                 nextRoundNumber,
-                t.courts
+                t.courts,
+                t.rounds
             );
             t.rounds = [...t.rounds, newRound];
         } else if (t.roundMode === 'unlimited') {
@@ -338,7 +340,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const t = { ...state.currentTournament };
         const standings = calculateStandings(t);
         const nextRoundNumber = t.currentRound + 1;
-        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy);
+        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy, t.finalPairing || '1&4v2&3');
         finalRound.number = nextRoundNumber;
         finalRound.matches = finalRound.matches.map((m) => ({ ...m, round: nextRoundNumber - 1 }));
         t.rounds = [...t.rounds, finalRound];

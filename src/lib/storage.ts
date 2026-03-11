@@ -3,8 +3,9 @@
 // ==========================================
 
 import { Tournament } from './types';
+import { BASE_PATH } from './basepath';
 
-const API_BASE = '/padel/api/tournaments';
+const API_BASE = `${BASE_PATH}/api/tournaments`;
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     const res = await fetch(url, {

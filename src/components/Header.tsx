@@ -3,11 +3,10 @@
 import { useApp } from '@/context/AppContext';
 import { authClient } from '@/lib/auth-client';
 import { brand } from '@/lib/brand';
+import { BASE_PATH as BASE } from '@/lib/basepath';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH || '/padel';
 
 export default function Header() {
     const { t, locale, setLocale, user } = useApp();

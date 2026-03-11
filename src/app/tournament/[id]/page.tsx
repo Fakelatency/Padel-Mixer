@@ -463,6 +463,9 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                         <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider hidden sm:table-cell">
                                             {t.won}
                                         </th>
+                                        <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider hidden sm:table-cell">
+                                            {t.pauses}
+                                        </th>
                                         <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.diff}
                                         </th>
@@ -503,6 +506,9 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                             </td>
                                             <td className="px-4 py-3 text-center text-navy-300 hidden sm:table-cell">
                                                 {s.matchesWon}
+                                            </td>
+                                            <td className="px-4 py-3 text-center text-navy-400 hidden sm:table-cell">
+                                                {s.sitOuts > 0 ? s.sitOuts : '-'}
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 <span

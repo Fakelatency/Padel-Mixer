@@ -139,14 +139,15 @@ export function sortStandings(
     });
 }
 
-// ─── Final Americano Round (1&4 vs 2&3) ─────────────────────
-// Creates a final round based on current standings:
-// Rank 1 + Rank 4 vs Rank 2 + Rank 3 (per court group of 4)
+// ─── Final Americano Round ───────────────────────────────────
+// Creates a final round based on current standings.
+// Pairing strategy is configurable: '1&2v3&4', '1&3v2&4', '1&4v2&3'
 export function generateFinalAmericanoRound(
     players: Player[],
     standings: PlayerStats[],
     courts: number,
-    rankingStrategy: 'points' | 'wins' = 'points'
+    rankingStrategy: 'points' | 'wins' = 'points',
+    finalPairing: '1&2v3&4' | '1&3v2&4' | '1&4v2&3' = '1&4v2&3'
 ): Round {
     const roundMatches: Match[] = [];
     const usedInRound = new Set<string>();
@@ -159,9 +160,24 @@ export function generateFinalAmericanoRound(
         const baseIdx = c * 4;
         if (baseIdx + 3 >= orderedIds.length) break;
 
-        // 1st + 4th vs 2nd + 3rd
-        const team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 3]];
-        const team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 2]];
+        // Apply the selected final pairing strategy
+        let team1: string[];
+        let team2: string[];
+        switch (finalPairing) {
+            case '1&2v3&4':
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 1]];
+                team2 = [orderedIds[baseIdx + 2], orderedIds[baseIdx + 3]];
+                break;
+            case '1&3v2&4':
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 2]];
+                team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 3]];
+                break;
+            case '1&4v2&3':
+            default:
+                team1 = [orderedIds[baseIdx], orderedIds[baseIdx + 3]];
+                team2 = [orderedIds[baseIdx + 1], orderedIds[baseIdx + 2]];
+                break;
+        }
 
         team1.forEach((id) => usedInRound.add(id));
         team2.forEach((id) => usedInRound.add(id));
@@ -322,19 +338,47 @@ export function generateMexicanoRound(
     standings: PlayerStats[],
     roundNumber: number,
     courts: number,
-    rankingStrategy: 'points' | 'wins' = 'points'
+    rankingStrategy: 'points' | 'wins' = 'points',
+    existingRounds: Round[] = []
 ): Round {
     const roundMatches: Match[] = [];
     const usedInRound = new Set<string>();
+
+    const sitOutCount = new Map<string, number>();
+    for (const p of players) sitOutCount.set(p.id, 0);
+
+    for (const r of existingRounds) {
+        if (!r.sitting) continue;
+        for (const sittingId of r.sitting) {
+            sitOutCount.set(sittingId, (sitOutCount.get(sittingId) || 0) + 1);
+        }
+    }
+
+    const playersNeeded = courts * 4;
+    let activeIds: string[] = [];
+
+    if (players.length <= playersNeeded) {
+        activeIds = players.map(p => p.id);
+    } else {
+        const shuffled = shuffle([...players]);
+        shuffled.sort((a, b) => {
+            const countA = sitOutCount.get(a.id) || 0;
+            const countB = sitOutCount.get(b.id) || 0;
+            return countA - countB;
+        });
+        const numSitOut = players.length - playersNeeded;
+        activeIds = shuffled.slice(numSitOut).map(p => p.id);
+    }
 
     let orderedIds: string[];
 
     if (roundNumber === 1) {
         // Random for first round
-        orderedIds = shuffle(players.map((p) => p.id));
+        orderedIds = shuffle(activeIds);
     } else {
-        // Sort by standings
-        orderedIds = sortStandings(standings, rankingStrategy).map((s) => s.playerId);
+        // Sort active players by standings
+        const activeStandings = standings.filter(s => activeIds.includes(s.playerId));
+        orderedIds = sortStandings(activeStandings, rankingStrategy).map((s) => s.playerId);
     }
 
     for (let c = 0; c < courts; c++) {
@@ -379,17 +423,48 @@ export function generateTeamMexicanoRound(
     players: Player[],
     teamStandings: { teamId: string; totalPoints: number }[],
     roundNumber: number,
-    courts: number
+    courts: number,
+    existingRounds: Round[] = []
 ): Round {
     const roundMatches: Match[] = [];
     const usedInRound = new Set<string>();
 
+    const sitOutCount = new Map<string, number>();
+    for (const t of teams) sitOutCount.set(t.id, 0);
+
+    for (const r of existingRounds) {
+        if (!r.sitting) continue;
+        for (const sittingId of r.sitting) {
+            const team = teams.find(t => t.playerIds.includes(sittingId));
+            if (team) {
+                sitOutCount.set(team.id, (sitOutCount.get(team.id) || 0) + 1);
+            }
+        }
+    }
+
+    const teamsNeeded = courts * 2;
+    let activeTeams: Team[] = [];
+
+    if (teams.length <= teamsNeeded) {
+        activeTeams = [...teams];
+    } else {
+        const shuffled = shuffle([...teams]);
+        shuffled.sort((a, b) => {
+            const countA = sitOutCount.get(a.id) || 0;
+            const countB = sitOutCount.get(b.id) || 0;
+            return countA - countB;
+        });
+        const numSitOut = teams.length - teamsNeeded;
+        activeTeams = shuffled.slice(numSitOut);
+    }
+
     let orderedTeams: Team[];
 
     if (roundNumber === 1) {
-        orderedTeams = shuffle([...teams]);
+        orderedTeams = shuffle([...activeTeams]);
     } else {
-        const sorted = [...teamStandings].sort(
+        const activeStandings = teamStandings.filter(s => activeTeams.some(t => t.id === s.teamId));
+        const sorted = [...activeStandings].sort(
             (a, b) => b.totalPoints - a.totalPoints
         );
         orderedTeams = sorted.map(

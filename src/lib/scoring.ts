@@ -16,6 +16,7 @@ export function calculateStandings(tournament: Tournament): PlayerStats[] {
             matchesPlayed: 0,
             matchesWon: 0,
             matchesLost: 0,
+            sitOuts: 0,
             partners: [],
             pointDifference: 0,
         });
@@ -74,6 +75,9 @@ export function calculateStandings(tournament: Tournament): PlayerStats[] {
                 const stats = statsMap.get(sittingPid);
                 if (stats) {
                     stats.totalPoints += 11;
+                    stats.matchesWon += 1;
+                    stats.pointDifference += 11;
+                    stats.sitOuts += 1;
                 }
             }
         }

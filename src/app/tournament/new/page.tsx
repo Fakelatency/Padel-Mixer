@@ -103,6 +103,18 @@ export default function NewTournamentPage() {
     const isTeamFormat = format === 'teamAmericano' || format === 'teamMexicano';
     const isMixedFormat = format === 'mixedAmericano' || format === 'mixedMexicano';
 
+    const getFormatEmoji = (f: TournamentFormat) => {
+        const map: Record<TournamentFormat, string> = {
+            americano: '🇺🇸',
+            mixedAmericano: '🇺🇸👫',
+            teamAmericano: '🇺🇸👥',
+            mexicano: '🇲🇽',
+            teamMexicano: '🇲🇽👥',
+            mixedMexicano: '🇲🇽👫',
+        };
+        return map[f] || '';
+    };
+
     const getFormatLabel = (f: TournamentFormat) => {
         const map: Record<TournamentFormat, string> = {
             americano: t.formatAmericano,
@@ -137,6 +149,40 @@ export default function NewTournamentPage() {
         return map[s];
     };
 
+    const getInitials = (name: string) => {
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    const autoAssignEmptyTeam = (currentPlayers: Player[], newP: Player) => {
+        if (isTeamFormat && currentPlayers.length > 0) {
+            const p1 = currentPlayers[currentPlayers.length - 1];
+            setTeams((prevTeams) => {
+                const isAssigned = prevTeams.some((t) => t.playerIds.includes(p1.id));
+                if (isAssigned) return prevTeams;
+
+                const tName = `${getInitials(p1.name)} & ${getInitials(newP.name)}`;
+                const newTeam: Team = {
+                    id: `team_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+                    name: tName,
+                    playerIds: [p1.id, newP.id],
+                };
+                return [...prevTeams, newTeam];
+            });
+        }
+    };
+
+    const updateTeamName = (teamId: string, newName: string) => {
+        setTeams((prev) => prev.map((t) => t.id === teamId ? { ...t, name: newName } : t));
+    };
+
+    const removeTeam = (teamId: string) => {
+        setTeams((prev) => prev.filter((t) => t.id !== teamId));
+    };
+
     const addPlayer = () => {
         if (!newPlayerName.trim()) return;
         const player: Player = {
@@ -144,6 +190,7 @@ export default function NewTournamentPage() {
             name: newPlayerName.trim(),
             gender: isMixedFormat ? newPlayerGender : undefined,
         };
+        autoAssignEmptyTeam(players, player);
         setPlayers([...players, player]);
         setNewPlayerName('');
     };
@@ -156,6 +203,7 @@ export default function NewTournamentPage() {
             gender: isMixedFormat ? newPlayerGender : undefined,
             linkedUserId: user.id,
         };
+        autoAssignEmptyTeam(players, player);
         setPlayers([...players, player]);
         setUserSearch('');
         setSearchResults([]);
@@ -313,19 +361,22 @@ export default function NewTournamentPage() {
                                         key={opt.value}
                                         onClick={() => setFormat(opt.value)}
                                         className={`glass-card p-5 text-left transition-all ${format === opt.value
-                                            ? 'border-gold-500/50 bg-gold-500/10 shadow-lg shadow-gold-500/10'
+                                            ? 'border-orange-500/50 bg-orange-500/10 shadow-lg shadow-orange-500/10'
                                             : ''
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="w-8 h-8 shrink-0">
-                                                <Image
-                                                    src={`${BASE}${brand.signetPath}`}
-                                                    width={32}
-                                                    height={32}
-                                                    alt="Icon"
-                                                    className="w-full h-full object-contain"
-                                                />
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <div className="w-8 h-8">
+                                                    <Image
+                                                        src={`${BASE}${brand.signetPath}`}
+                                                        width={32}
+                                                        height={32}
+                                                        alt="Icon"
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                </div>
+                                                <span className="text-2xl">{getFormatEmoji(opt.value)}</span>
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-lg text-white mb-1">
@@ -336,7 +387,7 @@ export default function NewTournamentPage() {
                                                 </p>
                                             </div>
                                             {format === opt.value && (
-                                                <div className="ml-auto text-gold-400 text-xl">{brand.icons.misc.checkmark}</div>
+                                                <div className="ml-auto text-orange-400 text-xl">{brand.icons.misc.checkmark}</div>
                                             )}
                                         </div>
                                     </button>
@@ -514,8 +565,23 @@ export default function NewTournamentPage() {
                                     </div>
 
                                     {teams.map((team) => (
-                                        <div key={team.id} className="glass-card-static p-4 mb-3">
-                                            <h4 className="font-bold text-gold-400 mb-3">{team.name}</h4>
+                                        <div key={team.id} className="glass-card-static p-4 mb-3 group">
+                                            <div className="flex items-center justify-between mb-3 border-b border-transparent focus-within:border-gold-400/30 pb-1">
+                                                <input
+                                                    type="text"
+                                                    value={team.name}
+                                                    onChange={(e) => updateTeamName(team.id, e.target.value)}
+                                                    className="font-bold text-gold-400 bg-transparent outline-none w-full text-base sm:text-lg"
+                                                    placeholder={t.teamName}
+                                                />
+                                                <button
+                                                    onClick={() => removeTeam(team.id)}
+                                                    className="text-navy-400 hover:text-red-400 transition-colors p-1 opacity-50 hover:opacity-100"
+                                                    title="Usuń drużynę"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
                                             <div className="flex flex-wrap gap-2">
                                                 {players.map((player) => {
                                                     const isInTeam = team.playerIds.includes(player.id);

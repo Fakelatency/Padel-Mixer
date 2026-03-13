@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { calculateStandings } from '@/lib/scoring';
+import { calculateStandings, calculateTeamStandings } from '@/lib/scoring';
 import { generateShareableUrl } from '@/lib/share';
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
@@ -33,10 +33,42 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     }
 
     const tournament = currentTournament;
-    const standings = calculateStandings(tournament);
+    const isMixedFormat = tournament.format === 'mixedAmericano' || tournament.format === 'mixedMexicano';
+    const isTeamFormat = tournament.format === 'teamAmericano' || tournament.format === 'teamMexicano' || (isMixedFormat && tournament.teamMode === 'fixed');
+
+    const rawStandings = isTeamFormat ? calculateTeamStandings(tournament) : calculateStandings(tournament);
 
     const getPlayerName = (pid: string) =>
         tournament.players.find((p) => p.id === pid)?.name || pid;
+
+    // Normalize standings to identical interface for display
+    const standings = rawStandings.map(s => {
+        if ('teamId' in s) {
+            // Team Standings
+            return {
+                id: s.teamId,
+                name: s.teamName,
+                totalPoints: s.totalPoints,
+                matchesPlayed: s.matchesPlayed,
+                matchesWon: s.matchesWon,
+                matchesLost: s.matchesLost,
+                pointDifference: s.pointDifference,
+                sitOuts: s.sitOuts,
+            };
+        } else {
+            // Player Standings
+            return {
+                id: s.playerId,
+                name: s.playerName,
+                totalPoints: s.totalPoints,
+                matchesPlayed: s.matchesPlayed,
+                matchesWon: s.matchesWon,
+                matchesLost: s.matchesLost,
+                pointDifference: s.pointDifference,
+                sitOuts: s.sitOuts,
+            };
+        }
+    });
 
     // Sort standings based on selected mode
     const sortedStandings = [...standings].sort((a, b) => {
@@ -100,7 +132,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                 <div className={`${podiumClasses[1]} rounded-2xl p-5 w-28 sm:w-36`}>
                                     <div className="text-3xl mb-1">{brand.icons.podium.second}</div>
                                     <div className="font-bold text-white text-sm sm:text-base truncate">
-                                        {podium[1].playerName}
+                                        {podium[1].name}
                                     </div>
                                     <div className="text-lg font-black text-navy-200 mt-1">
                                         {podium[1].totalPoints}
@@ -122,7 +154,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                         {t.champion}
                                     </div>
                                     <div className="font-black text-white text-base sm:text-lg truncate">
-                                        {podium[0].playerName}
+                                        {podium[0].name}
                                     </div>
                                     <div className="text-2xl font-black text-gold-400 mt-1">
                                         {podium[0].totalPoints}
@@ -141,7 +173,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                 <div className={`${podiumClasses[2]} rounded-2xl p-5 w-28 sm:w-36`}>
                                     <div className="text-3xl mb-1">{brand.icons.podium.third}</div>
                                     <div className="font-bold text-white text-sm sm:text-base truncate">
-                                        {podium[2].playerName}
+                                        {podium[2].name}
                                     </div>
                                     <div className="text-lg font-black text-orange-300 mt-1">
                                         {podium[2].totalPoints}
@@ -212,7 +244,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                             <tbody>
                                 {sortedStandings.map((s, idx) => (
                                     <tr
-                                        key={s.playerId}
+                                        key={s.id}
                                         className={`border-b border-navy-800/30 ${idx < 3 ? 'bg-navy-800/20' : ''
                                             }`}
                                     >
@@ -233,7 +265,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                                 {idx < 3 && <span>{trophies[idx]}</span>}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 font-medium text-white">{s.playerName}</td>
+                                        <td className="px-4 py-3 font-medium text-white">{s.name}</td>
                                         <td className="px-4 py-3 text-center font-bold text-gold-400">{s.totalPoints}</td>
                                         <td className="px-4 py-3 text-center text-navy-300">{s.matchesPlayed}</td>
                                         <td className="px-4 py-3 text-center text-navy-300">{s.matchesWon}</td>
@@ -328,6 +360,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                                 players: tournament.players,
                                 teams: tournament.teams || [],
                                 roundMode: tournament.roundMode || 'fixed',
+                                teamMode: tournament.teamMode,
                             };
                             localStorage.setItem('padel_repeat_settings', JSON.stringify(repeatSettings));
                             router.push('/tournament/new?repeat=1');

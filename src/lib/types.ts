@@ -57,6 +57,8 @@ export interface Round {
 
 export type RoundMode = 'fixed' | 'unlimited';
 
+export type TeamMode = 'fixed' | 'rotating';
+
 export type FinalPairing = '1&2v3&4' | '1&3v2&4' | '1&4v2&3';
 
 export interface Tournament {
@@ -71,6 +73,7 @@ export interface Tournament {
     currentRound: number;
     roundMode: RoundMode;
     totalRounds: number | null;
+    teamMode?: TeamMode;
     rankingStrategy: 'points' | 'wins';
     finalPairing: FinalPairing;
     status: TournamentStatus;
@@ -99,6 +102,7 @@ export interface TournamentSettings {
     teams: Team[];
     roundMode: RoundMode;
     totalRounds: number | null;
+    teamMode?: TeamMode;
     rankingStrategy: 'points' | 'wins';
     finalPairing: FinalPairing;
 }

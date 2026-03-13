@@ -95,10 +95,10 @@ export function calculateStandings(tournament: Tournament): PlayerStats[] {
 
 export function calculateTeamStandings(
     tournament: Tournament
-): { teamId: string; teamName: string; totalPoints: number; matchesPlayed: number; matchesWon: number; pointDifference: number }[] {
+): { teamId: string; teamName: string; totalPoints: number; matchesPlayed: number; matchesWon: number; matchesLost: number; pointDifference: number; sitOuts: number }[] {
     const teamMap = new Map<
         string,
-        { teamId: string; teamName: string; totalPoints: number; matchesPlayed: number; matchesWon: number; pointDifference: number }
+        { teamId: string; teamName: string; totalPoints: number; matchesPlayed: number; matchesWon: number; matchesLost: number; pointDifference: number; sitOuts: number }
     >();
 
     for (const team of tournament.teams) {
@@ -108,7 +108,9 @@ export function calculateTeamStandings(
             totalPoints: 0,
             matchesPlayed: 0,
             matchesWon: 0,
+            matchesLost: 0,
             pointDifference: 0,
+            sitOuts: 0,
         });
     }
 
@@ -132,6 +134,7 @@ export function calculateTeamStandings(
                 s.matchesPlayed += 1;
                 s.pointDifference += match.score1 - match.score2;
                 if (match.score1 > match.score2) s.matchesWon += 1;
+                else if (match.score1 < match.score2) s.matchesLost += 1;
             }
 
             if (team2 && teamMap.has(team2.id)) {
@@ -140,6 +143,24 @@ export function calculateTeamStandings(
                 s.matchesPlayed += 1;
                 s.pointDifference += match.score2 - match.score1;
                 if (match.score2 > match.score1) s.matchesWon += 1;
+                else if (match.score2 < match.score1) s.matchesLost += 1;
+            }
+        }
+
+        // Award bye points to teams sitting out
+        if (round.completed && round.sitting && round.sitting.length > 0) {
+            for (const team of tournament.teams) {
+                // Determine if the *entire* team is sitting out.
+                // Or if at least one member is sitting out, does the whole team sit out?
+                // In Team formats, if a player is sitting, their team is sitting.
+                const isSitting = team.playerIds.every(pid => round.sitting.includes(pid));
+                if (isSitting && teamMap.has(team.id)) {
+                    const stats = teamMap.get(team.id)!;
+                    stats.totalPoints += 11;
+                    stats.matchesWon += 1;
+                    stats.pointDifference += 11;
+                    stats.sitOuts += 1;
+                }
             }
         }
     }

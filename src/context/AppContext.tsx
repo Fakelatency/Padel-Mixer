@@ -19,6 +19,7 @@ import {
     generateMexicanoRound,
     generateTeamMexicanoRound,
     generateFinalAmericanoRound,
+    generateFinalTeamAmericanoRound,
     generateAmericanoNextRound,
 } from '@/lib/scheduler';
 import { authClient } from '@/lib/auth-client';
@@ -53,6 +54,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
     const roundMode = settings.roundMode || 'fixed';
     const rankingStrategy = settings.rankingStrategy || 'points';
     const totalRounds = settings.totalRounds || null;
+    const teamMode = settings.teamMode || 'rotating';
 
     let rounds: Round[] = [];
 
@@ -65,7 +67,11 @@ function createTournamentData(settings: TournamentSettings): Tournament {
                 rounds = generateAmericanoRounds(settings.players, settings.courts);
                 break;
             case 'mixedAmericano':
-                rounds = generateMixedAmericanoRounds(settings.players, settings.courts);
+                if (teamMode === 'fixed') {
+                    rounds = generateTeamAmericanoRounds(settings.teams, settings.players, settings.courts);
+                } else {
+                    rounds = generateMixedAmericanoRounds(settings.players, settings.courts);
+                }
                 break;
             case 'teamAmericano':
                 rounds = generateTeamAmericanoRounds(settings.teams, settings.players, settings.courts);
@@ -78,6 +84,20 @@ function createTournamentData(settings: TournamentSettings): Tournament {
             case 'teamMexicano': {
                 const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, []);
                 rounds = [firstRound];
+                break;
+            }
+            case 'mixedMexicano': {
+                if (teamMode === 'fixed') {
+                    const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, []);
+                    rounds = [firstRound];
+                } else {
+                    // For rotating mixed mexicano, we treat it like regular mexicano for pair generation 
+                    // (we'd need a specialized generator for true mixed mexicano with rotating pairs that also enforces M+F, 
+                    // but for now we fallback to standard mexicano if they didn't implement it)
+                    // TODO: Implement generateMixedMexicanoRound if needed, for now standard mexicano works as a fallback
+                    const firstRound = generateMexicanoRound(settings.players, [], 1, settings.courts, rankingStrategy, []);
+                    rounds = [firstRound];
+                }
                 break;
             }
             default:
@@ -111,6 +131,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
         currentRound: 1,
         roundMode,
         totalRounds,
+        teamMode,
         rankingStrategy,
         finalPairing: settings.finalPairing || '1&4v2&3',
         status: 'active',
@@ -338,14 +359,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const generateFinalRound = useCallback(() => {
         if (!state.currentTournament) return;
         const t = { ...state.currentTournament };
-        const standings = calculateStandings(t);
         const nextRoundNumber = t.currentRound + 1;
-        const finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy, t.finalPairing || '1&4v2&3');
+        
+        const isMixedFormat = t.format === 'mixedAmericano' || t.format === 'mixedMexicano';
+        const isTeamFormat = t.format === 'teamAmericano' || t.format === 'teamMexicano' || (isMixedFormat && t.teamMode === 'fixed');
+
+        let finalRound: Round;
+
+        if (isTeamFormat) {
+            const teamStandings = calculateTeamStandings(t);
+            finalRound = generateFinalTeamAmericanoRound(t.teams, t.players, teamStandings, t.courts, t.rankingStrategy, t.finalPairing || '1&4v2&3');
+        } else {
+            const standings = calculateStandings(t);
+            finalRound = generateFinalAmericanoRound(t.players, standings, t.courts, t.rankingStrategy, t.finalPairing || '1&4v2&3');
+        }
+
         finalRound.number = nextRoundNumber;
         finalRound.matches = finalRound.matches.map((m) => ({ ...m, round: nextRoundNumber - 1 }));
+        
         t.rounds = [...t.rounds, finalRound];
         t.currentRound = nextRoundNumber;
         t.updatedAt = new Date().toISOString();
+        
         apiSaveTournament(t);
         dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
     }, [state.currentTournament]);

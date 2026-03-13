@@ -233,7 +233,7 @@ const pl: Translations = {
     formatMixedMexicano: 'MEXICANO MIKST',
     formatTeamMexicano: 'MEXICANO DUET',
     formatAmericanoDesc: 'Dynamiczna forma rozgrywki, w której system losowo dobiera partnerów i przeciwników.',
-    formatMixedAmericanoDesc: 'Pary zawsze składają się z kobiety i mężczyzny. Punkty indywidualne.',
+    formatMixedAmericanoDesc: 'Pary zawsze składają się z kobiety i mężczyzny. Punkty drużynowe.',
     formatTeamAmericanoDesc: 'Stałe drużyny 2-osobowe. Punkty liczone drużynowo.',
     formatMexicanoDesc: 'Dynamiczna forma rozgrywki, w której system dobiera partnerów i przeciwników na podstawie poziomu i ich ostatnich wyników.',
     formatMixedMexicanoDesc: 'MEXICANO w stałych parach. W każdej parze musi znaleźć się jedna kobieta i jeden mężczyzna.',

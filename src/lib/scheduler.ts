@@ -206,6 +206,86 @@ export function generateFinalAmericanoRound(
     };
 }
 
+// ─── Final Team Americano Round ──────────────────────────────
+export function generateFinalTeamAmericanoRound(
+    teams: Team[],
+    players: Player[],
+    teamStandings: { teamId: string; totalPoints: number; pointDifference: number; matchesWon: number }[],
+    courts: number,
+    rankingStrategy: 'points' | 'wins' = 'points',
+    finalPairing: '1&2v3&4' | '1&3v2&4' | '1&4v2&3' = '1&4v2&3'
+): Round {
+    const roundMatches: Match[] = [];
+    const usedInRound = new Set<string>();
+
+    const sortedStandings = [...teamStandings].sort((a, b) => {
+        if (rankingStrategy === 'wins') {
+            if (b.matchesWon !== a.matchesWon) return b.matchesWon - a.matchesWon;
+            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+            return b.pointDifference - a.pointDifference;
+        }
+        if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+        if (b.pointDifference !== a.pointDifference) return b.pointDifference - a.pointDifference;
+        return b.matchesWon - a.matchesWon;
+    });
+
+    const orderedTeams = sortedStandings
+        .map((s) => teams.find(t => t.id === s.teamId))
+        .filter((t): t is Team => t !== undefined);
+
+    for (let c = 0; c < courts; c++) {
+        const baseIdx = c * 4;
+        if (baseIdx + 3 >= orderedTeams.length) break;
+
+        let team1: Team;
+        let team2: Team;
+        switch (finalPairing) {
+            case '1&2v3&4':
+                // For teams, this means Team 1 vs Team 2 in one match, Team 3 vs Team 4 in another (but courts only hold 2 teams)
+                // Wait, finalPairing refers to individuals in standard Americano.
+                // In Team formats, "1&4 vs 2&3" doesn't make sense since they are 2-person teams.
+                // In a team tournament with 2-person teams, we just match Team 1 vs Team 2 on court 1, Team 3 vs Team 4 on court 2.
+                team1 = orderedTeams[c * 2];
+                team2 = orderedTeams[c * 2 + 1];
+                break;
+            case '1&3v2&4':
+                team1 = orderedTeams[c * 2];
+                team2 = orderedTeams[c * 2 + 1];
+                break;
+            case '1&4v2&3':
+            default:
+                team1 = orderedTeams[c * 2];
+                team2 = orderedTeams[c * 2 + 1];
+                break;
+        }
+
+        team1.playerIds.forEach((id) => usedInRound.add(id));
+        team2.playerIds.forEach((id) => usedInRound.add(id));
+
+        roundMatches.push({
+            id: generateId('match'),
+            round: 0,
+            court: c + 1,
+            team1: { playerIds: team1.playerIds },
+            team2: { playerIds: team2.playerIds },
+            score1: null,
+            score2: null,
+            status: 'upcoming',
+        });
+    }
+
+    const allIds = players.map((p) => p.id);
+    const sitting = allIds.filter((id) => !usedInRound.has(id));
+
+    return {
+        id: generateId('round'),
+        number: 0,
+        matches: roundMatches,
+        completed: false,
+        sitting,
+    };
+}
+
 // ─── Mixed Americano ────────────────────────────────────────
 // Every team must have 1 male + 1 female
 export function generateMixedAmericanoRounds(

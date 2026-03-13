@@ -59,6 +59,9 @@ export interface Translations {
     teamName: string;
     addTeam: string;
     assignToTeam: string;
+    teamMode: string;
+    rotatingTeams: string;
+    fixedTeams: string;
 
     // Active tournament
     matches: string;
@@ -266,6 +269,9 @@ const pl: Translations = {
     teamName: 'Nazwa drużyny',
     addTeam: 'Dodaj drużynę',
     assignToTeam: 'Przypisz do drużyny',
+    teamMode: 'Tryb drużynowy',
+    rotatingTeams: 'Zmienne pary',
+    fixedTeams: 'Stałe pary',
 
     matches: 'Mecze',
     leaderboard: 'Tabela',
@@ -455,6 +461,9 @@ const en: Translations = {
     teamName: 'Team name',
     addTeam: 'Add team',
     assignToTeam: 'Assign to team',
+    teamMode: 'Team mode',
+    rotatingTeams: 'Rotating pairs',
+    fixedTeams: 'Fixed pairs',
 
     matches: 'Matches',
     leaderboard: 'Leaderboard',
@@ -644,6 +653,9 @@ const de: Translations = {
     teamName: 'Teamname',
     addTeam: 'Team hinzufügen',
     assignToTeam: 'Dem Team zuweisen',
+    teamMode: 'Teammodus',
+    rotatingTeams: 'Wechselnde Paare',
+    fixedTeams: 'Feste Paare',
 
     matches: 'Spiele',
     leaderboard: 'Rangliste',
@@ -833,6 +845,9 @@ const ua: Translations = {
     teamName: 'Назва команди',
     addTeam: 'Додати команду',
     assignToTeam: 'Призначити в команду',
+    teamMode: 'Командний режим',
+    rotatingTeams: 'Змінні пари',
+    fixedTeams: 'Постійні пари',
 
     matches: 'Матчі',
     leaderboard: 'Таблиця',

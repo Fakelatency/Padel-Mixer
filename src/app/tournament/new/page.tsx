@@ -40,6 +40,7 @@ export default function NewTournamentPage() {
 
     const [roundMode, setRoundMode] = useState<RoundMode>('unlimited');
     const [totalRounds, setTotalRounds] = useState<number>(12);
+    const [teamMode, setTeamMode] = useState<'fixed' | 'rotating'>('rotating');
     const [rankingStrategy, setRankingStrategy] = useState<'points' | 'wins'>('points');
     const [finalPairing, setFinalPairing] = useState<'1&2v3&4' | '1&3v2&4' | '1&4v2&3'>('1&4v2&3');
 
@@ -66,6 +67,7 @@ export default function NewTournamentPage() {
                     if (s.scoringSystem) setScoringSystem(s.scoringSystem);
                     if (s.roundMode) setRoundMode(s.roundMode);
                     if (s.totalRounds) setTotalRounds(s.totalRounds);
+                    if (s.teamMode) setTeamMode(s.teamMode);
                     if (s.rankingStrategy) setRankingStrategy(s.rankingStrategy);
                     if (s.finalPairing) setFinalPairing(s.finalPairing);
                     setStep('settings');
@@ -100,8 +102,8 @@ export default function NewTournamentPage() {
         return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
     }, [userSearch, playerMode]);
 
-    const isTeamFormat = format === 'teamAmericano' || format === 'teamMexicano';
     const isMixedFormat = format === 'mixedAmericano' || format === 'mixedMexicano';
+    const isTeamFormat = format === 'teamAmericano' || format === 'teamMexicano' || (isMixedFormat && teamMode === 'fixed');
 
     const getFormatEmoji = (f: TournamentFormat) => {
         const map: Record<TournamentFormat, string> = {
@@ -296,6 +298,7 @@ export default function NewTournamentPage() {
 
             roundMode,
             totalRounds: roundMode === 'fixed' ? totalRounds : null,
+            teamMode: isMixedFormat ? teamMode : undefined,
             rankingStrategy,
             finalPairing,
         });
@@ -392,6 +395,35 @@ export default function NewTournamentPage() {
                                         </div>
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Mixed Format Team Mode ── */}
+                    {step === 'format' && isMixedFormat && (
+                        <div className="mt-8">
+                            <h2 className="text-xl font-bold mb-4 text-center">{t.teamMode || 'Tryb drużynowy'}</h2>
+                            <div className="flex gap-3 max-w-lg mx-auto">
+                                <button
+                                    onClick={() => setTeamMode('rotating')}
+                                    className={`flex-1 py-4 px-3 rounded-xl transition-all ${teamMode === 'rotating'
+                                        ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                        : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                        }`}
+                                >
+                                    <div className="font-bold text-lg mb-1">{t.rotatingTeams || 'Zmienne pary'}</div>
+                                    <div className="text-xs opacity-80 whitespace-normal">Pary losują się co mecz</div>
+                                </button>
+                                <button
+                                    onClick={() => setTeamMode('fixed')}
+                                    className={`flex-1 py-4 px-3 rounded-xl transition-all ${teamMode === 'fixed'
+                                        ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/20'
+                                        : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
+                                        }`}
+                                >
+                                    <div className="font-bold text-lg mb-1">{t.fixedTeams || 'Stałe pary'}</div>
+                                    <div className="text-xs opacity-80 whitespace-normal">Grasz 1M+1K przez cały turniej</div>
+                                </button>
                             </div>
                         </div>
                     )}

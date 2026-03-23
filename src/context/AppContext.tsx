@@ -20,6 +20,9 @@ import {
     generateTeamMexicanoRound,
     generateFinalAmericanoRound,
     generateFinalTeamAmericanoRound,
+    generateTeamAmericanoNextRound,
+    generateMixedAmericanoNextRound,
+    generateMixedMexicanoRound,
     generateAmericanoNextRound,
 } from '@/lib/scheduler';
 import { authClient } from '@/lib/auth-client';
@@ -59,8 +62,19 @@ function createTournamentData(settings: TournamentSettings): Tournament {
     let rounds: Round[] = [];
 
     if (roundMode === 'unlimited' && ['americano', 'mixedAmericano', 'teamAmericano'].includes(settings.format)) {
-        const firstRound = generateAmericanoNextRound(settings.players, [], settings.courts);
-        rounds = [firstRound];
+        const isMixedFormat = settings.format === 'mixedAmericano';
+        const isTeamFormat = settings.format === 'teamAmericano' || (isMixedFormat && teamMode === 'fixed');
+
+        if (isTeamFormat) {
+            const firstRound = generateTeamAmericanoNextRound(settings.teams, settings.players, [], settings.courts);
+            rounds = [firstRound];
+        } else if (settings.format === 'mixedAmericano') {
+            const firstRound = generateMixedAmericanoNextRound(settings.players, [], settings.courts);
+            rounds = [firstRound];
+        } else {
+            const firstRound = generateAmericanoNextRound(settings.players, [], settings.courts);
+            rounds = [firstRound];
+        }
     } else {
         switch (settings.format) {
             case 'americano':
@@ -87,17 +101,17 @@ function createTournamentData(settings: TournamentSettings): Tournament {
                 break;
             }
             case 'mixedMexicano': {
-                if (teamMode === 'fixed') {
-                    const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, []);
-                    rounds = [firstRound];
-                } else {
-                    // For rotating mixed mexicano, we treat it like regular mexicano for pair generation 
-                    // (we'd need a specialized generator for true mixed mexicano with rotating pairs that also enforces M+F, 
-                    // but for now we fallback to standard mexicano if they didn't implement it)
-                    // TODO: Implement generateMixedMexicanoRound if needed, for now standard mexicano works as a fallback
-                    const firstRound = generateMexicanoRound(settings.players, [], 1, settings.courts, rankingStrategy, []);
-                    rounds = [firstRound];
-                }
+                const firstRound = generateMixedMexicanoRound(
+                    settings.players,
+                    settings.teams,
+                    [],
+                    [],
+                    1,
+                    settings.courts,
+                    teamMode,
+                    []
+                );
+                rounds = [firstRound];
                 break;
             }
             default:
@@ -106,13 +120,23 @@ function createTournamentData(settings: TournamentSettings): Tournament {
 
         // Handle specific number of rounds for Fixed mode (only for Americano types that are pre-generated)
         if (roundMode === 'fixed' && totalRounds && ['americano', 'mixedAmericano', 'teamAmericano'].includes(settings.format)) {
+            const isMixedFormat = settings.format === 'mixedAmericano';
+            const isTeamFormat = settings.format === 'teamAmericano' || (isMixedFormat && teamMode === 'fixed');
+
             if (rounds.length > totalRounds) {
                 // Slice if fewer rounds requested
                 rounds = rounds.slice(0, totalRounds);
             } else if (rounds.length < totalRounds) {
                 // Generate extra rounds if more requested
                 while (rounds.length < totalRounds) {
-                    const nextRound = generateAmericanoNextRound(settings.players, rounds, settings.courts);
+                    let nextRound: Round;
+                    if (isTeamFormat) {
+                        nextRound = generateTeamAmericanoNextRound(settings.teams, settings.players, rounds, settings.courts);
+                    } else if (settings.format === 'mixedAmericano') {
+                        nextRound = generateMixedAmericanoNextRound(settings.players, rounds, settings.courts);
+                    } else {
+                        nextRound = generateAmericanoNextRound(settings.players, rounds, settings.courts);
+                    }
                     rounds.push(nextRound);
                 }
             }
@@ -341,8 +365,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 t.rounds
             );
             t.rounds = [...t.rounds, newRound];
+        } else if (t.format === 'mixedMexicano') {
+            const standings = calculateStandings(t);
+            const teamStandings = calculateTeamStandings(t);
+            const newRound = generateMixedMexicanoRound(
+                t.players,
+                t.teams,
+                standings,
+                teamStandings,
+                nextRoundNumber,
+                t.courts,
+                t.teamMode || 'rotating',
+                t.rounds
+            );
+            t.rounds = [...t.rounds, newRound];
         } else if (t.roundMode === 'unlimited') {
-            const newRound = generateAmericanoNextRound(t.players, t.rounds, t.courts);
+            const isMixedFormat = t.format === 'mixedAmericano';
+            const isTeamFormat = t.format === 'teamAmericano' || (isMixedFormat && t.teamMode === 'fixed');
+
+            let newRound: Round;
+            if (isTeamFormat) {
+                newRound = generateTeamAmericanoNextRound(t.teams, t.players, t.rounds, t.courts);
+            } else if (isMixedFormat) {
+                newRound = generateMixedAmericanoNextRound(t.players, t.rounds, t.courts);
+            } else {
+                newRound = generateAmericanoNextRound(t.players, t.rounds, t.courts);
+            }
             t.rounds = [...t.rounds, newRound];
         }
 

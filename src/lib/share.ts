@@ -3,6 +3,7 @@
 // ==========================================
 
 import { Tournament } from './types';
+import LZString from 'lz-string';
 
 interface ShareData {
     n: string; // name
@@ -44,7 +45,8 @@ export function generateShareableUrl(tournament: Tournament): string {
     };
 
     const jsonStr = JSON.stringify(shareData);
-    const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+    const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+    const encoded = `v2:${compressed}`;
 
     if (typeof window !== 'undefined') {
         return `${window.location.origin}/results?data=${encoded}`;
@@ -54,7 +56,16 @@ export function generateShareableUrl(tournament: Tournament): string {
 
 export function parseShareableData(encoded: string): Tournament | null {
     try {
-        const jsonStr = decodeURIComponent(escape(atob(encoded)));
+        let jsonStr: string;
+        if (encoded.startsWith('v2:')) {
+            const compressed = encoded.slice(3);
+            jsonStr = LZString.decompressFromEncodedURIComponent(compressed) || '';
+            if (!jsonStr) throw new Error('Failed to decompress v2 data');
+        } else {
+            // Legacy base64 decoding
+            jsonStr = decodeURIComponent(escape(atob(encoded)));
+        }
+
         const data: ShareData = JSON.parse(jsonStr);
 
         const tournament: Tournament = {

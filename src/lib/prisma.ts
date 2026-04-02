@@ -6,7 +6,19 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+        throw new Error('DATABASE_URL environment variable is not set');
+    }
+    const adapter = new PrismaPg({
+        connectionString,
+        options: {
+            ssl: connectionString.includes('sslmode=disable')
+                ? false
+                : { rejectUnauthorized: false },
+            connectionTimeoutMillis: 10000,
+        },
+    });
     return new PrismaClient({ adapter });
 }
 

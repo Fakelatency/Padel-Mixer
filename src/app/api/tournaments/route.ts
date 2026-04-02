@@ -15,28 +15,36 @@ async function getUser() {
 }
 
 export async function GET() {
-    const user = await getUser();
+    try {
+        const user = await getUser();
 
-    // If logged in, show user's tournaments; otherwise show all anonymous tournaments
-    const tournaments = await prisma.tournament.findMany({
-        where: user ? { userId: user.id } : { userId: null },
-        orderBy: { updatedAt: 'desc' },
-        select: {
-            id: true,
-            name: true,
-            status: true,
-            data: true,
-            createdAt: true,
-            updatedAt: true,
-        },
-    });
+        // If logged in, show user's tournaments; otherwise show all anonymous tournaments
+        const tournaments = await prisma.tournament.findMany({
+            where: user ? { userId: user.id } : { userId: null },
+            orderBy: { updatedAt: 'desc' },
+            select: {
+                id: true,
+                name: true,
+                status: true,
+                data: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
 
-    const parsed = tournaments.map((t) => ({
-        ...JSON.parse(t.data),
-        id: t.id,
-    }));
+        const parsed = tournaments.map((t) => ({
+            ...JSON.parse(t.data),
+            id: t.id,
+        }));
 
-    return NextResponse.json(parsed);
+        return NextResponse.json(parsed);
+    } catch (error) {
+        console.error('[GET /api/tournaments] Error:', error);
+        return NextResponse.json(
+            { error: 'Internal Server Error', details: String(error) },
+            { status: 500 }
+        );
+    }
 }
 
 export async function POST(req: NextRequest) {

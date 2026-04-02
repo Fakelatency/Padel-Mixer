@@ -35,6 +35,6 @@ export function getPrisma(): PrismaClient {
 // Keep backward-compatible export as a getter
 export const prisma = new Proxy({} as PrismaClient, {
     get(_target, prop) {
-        return (getPrisma() as Record<string | symbol, unknown>)[prop];
+        return (getPrisma() as unknown as Record<string | symbol, unknown>)[prop];
     },
 });

@@ -104,6 +104,18 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
         }
     };
 
+    const handleScore2Change = (val: number) => {
+        const s2 = Math.max(0, Math.min(tournament.scoringSystem, val));
+        const s1 = tournament.scoringSystem - s2;
+        setTempScore1(s1);
+        setTempScore2(s2);
+        // Auto-save when a non-zero score is selected
+        if (s2 > 0 && editingMatch && isScoreValid(s1, s2, tournament.scoringSystem)) {
+            updateScore(editingMatch, s1, s2);
+            setEditingMatch(null);
+        }
+    };
+
     const saveScore = () => {
         if (editingMatch && isScoreValid(tempScore1, tempScore2, tournament.scoringSystem)) {
             updateScore(editingMatch, tempScore1, tempScore2);
@@ -241,9 +253,15 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                         <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
                                                             {getPlayerName(match.team2.playerIds[0])}
                                                         </div>
-                                                        <div className="score-auto shadow-lg shadow-black/20">
-                                                            {tempScore2}
-                                                        </div>
+                                                        <select
+                                                            value={tempScore2}
+                                                            onChange={(e) => handleScore2Change(Number(e.target.value))}
+                                                            className="score-picker-select shadow-lg shadow-black/20"
+                                                        >
+                                                            {scoreOptions.map((v) => (
+                                                                <option key={v} value={v}>{v}</option>
+                                                            ))}
+                                                        </select>
                                                         <div className="text-xs sm:text-sm font-bold text-white drop-shadow-md px-3 py-1.5 bg-black/50 rounded-xl w-[80%] text-center border border-white/10 backdrop-blur-sm truncate">
                                                             {match.team2.playerIds[1] ? getPlayerName(match.team2.playerIds[1]) : '\u00A0'}
                                                         </div>

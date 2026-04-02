@@ -10,6 +10,8 @@ function createPrismaClient() {
     if (!connectionString) {
         throw new Error('DATABASE_URL environment variable is not set');
     }
+    console.log('[Prisma] Connecting to database...',
+        connectionString.replace(/\/\/.*@/, '//***:***@'));
     const adapter = new PrismaPg({
         connectionString,
         options: {
@@ -22,8 +24,17 @@ function createPrismaClient() {
     return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-    globalForPrisma.prisma = prisma;
+// Lazy initialization — only connect when first accessed
+export function getPrisma(): PrismaClient {
+    if (!globalForPrisma.prisma) {
+        globalForPrisma.prisma = createPrismaClient();
+    }
+    return globalForPrisma.prisma;
 }
+
+// Keep backward-compatible export as a getter
+export const prisma = new Proxy({} as PrismaClient, {
+    get(_target, prop) {
+        return (getPrisma() as Record<string | symbol, unknown>)[prop];
+    },
+});

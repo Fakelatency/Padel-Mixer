@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { calculateStandings } from '@/lib/scoring';
+import { calculateStandings, calculateTeamStandings } from '@/lib/scoring';
 import { isScoreValid } from '@/lib/scoring';
 import { Match, PlayerStats } from '@/lib/types';
 import { sortStandings } from '@/lib/scheduler';
@@ -65,10 +65,54 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     }
 
     const tournament = currentTournament;
-    const standings = calculateStandings(tournament);
+    const isMixedFormat = tournament.format === 'mixedAmericano' || tournament.format === 'mixedMexicano';
+    const isTeamFormat = tournament.format === 'teamAmericano' || tournament.format === 'teamMexicano' || (isMixedFormat && tournament.teamMode === 'fixed');
+
+    const rawStandings = isTeamFormat ? calculateTeamStandings(tournament) : calculateStandings(tournament);
+
+    // Normalize standings to identical interface for display
+    const standings = rawStandings.map(s => {
+        if ('teamId' in s) {
+            // Team Standings
+            return {
+                id: s.teamId,
+                name: s.teamName,
+                totalPoints: s.totalPoints,
+                matchesPlayed: s.matchesPlayed,
+                matchesWon: s.matchesWon,
+                matchesLost: s.matchesLost,
+                pointDifference: s.pointDifference,
+                sitOuts: s.sitOuts,
+                partners: [] as string[],
+            };
+        } else {
+            // Player Standings
+            return {
+                id: s.playerId,
+                name: s.playerName,
+                totalPoints: s.totalPoints,
+                matchesPlayed: s.matchesPlayed,
+                matchesWon: s.matchesWon,
+                matchesLost: s.matchesLost,
+                pointDifference: s.pointDifference,
+                sitOuts: s.sitOuts,
+                partners: s.partners,
+            };
+        }
+    });
 
     // Sort standings based on selected mode
-    const sortedStandings = sortStandings(standings, sortMode);
+    const sortedStandings = [...standings].sort((a, b) => {
+        if (sortMode === 'wins') {
+            if (b.matchesWon !== a.matchesWon) return b.matchesWon - a.matchesWon;
+            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+            return b.pointDifference - a.pointDifference;
+        }
+        // Default: points
+        if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+        if (b.pointDifference !== a.pointDifference) return b.pointDifference - a.pointDifference;
+        return b.matchesWon - a.matchesWon;
+    });
 
     const currentRound = tournament.rounds[tournament.currentRound - 1];
     const isCurrentRoundComplete = currentRound?.matches.every(
@@ -197,11 +241,11 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                 {t.round} {tournament.currentRound}
                             </h3>
 
-                            <div className={`grid grid-cols-1 gap-6 md:gap-8 ${currentRound?.matches.length === 1 ? 'max-w-2xl mx-auto' : 'lg:grid-cols-2'}`}>
+                            <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
                                 {currentRound?.matches.map((match, idx) => (
                                     <div
                                         key={match.id}
-                                        className="animate-fade-in"
+                                        className={`animate-fade-in w-full ${currentRound.matches.length === 1 ? 'max-w-2xl' : 'max-w-2xl lg:max-w-none lg:w-[calc(50%-1rem)]'}`}
                                         style={{ animationDelay: `${idx * 0.05}s`, opacity: 0 }}
                                     >
                                         {editingMatch === match.id ? (
@@ -470,7 +514,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                             {t.position}
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-bold text-navy-200 uppercase tracking-wider">
-                                            {t.player}
+                                            {isTeamFormat ? (t.teamName || 'Team') : t.player}
                                         </th>
                                         <th className="px-4 py-3 text-center text-xs font-bold text-navy-200 uppercase tracking-wider">
                                             {t.points}
@@ -492,10 +536,10 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                 <tbody>
                                     {sortedStandings.map((s, idx) => (
                                         <tr
-                                            key={s.playerId}
+                                            key={s.id}
                                             className="border-b border-navy-800/30 hover:bg-navy-800/30 transition-colors cursor-pointer"
                                             onClick={() => {
-                                                setSelectedPlayer(s.playerId);
+                                                setSelectedPlayer(s.id);
                                                 setActiveTab('stats');
                                             }}
                                         >
@@ -514,7 +558,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <span className="font-medium text-white">{s.playerName}</span>
+                                                <span className="font-medium text-white">{s.name}</span>
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 <span className="font-bold text-gold-400 text-lg">{s.totalPoints}</span>
@@ -556,20 +600,20 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                         <div className="flex flex-wrap gap-2 mb-6">
                             {standings.map((s) => (
                                 <button
-                                    key={s.playerId}
-                                    onClick={() => setSelectedPlayer(s.playerId)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${selectedPlayer === s.playerId
+                                    key={s.id}
+                                    onClick={() => setSelectedPlayer(s.id)}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${selectedPlayer === s.id
                                         ? 'bg-gold-500/20 text-gold-300 border border-gold-500/30'
                                         : 'bg-navy-800 text-navy-300 hover:bg-navy-700'
                                         }`}
                                 >
-                                    {s.playerName}
+                                    {s.name}
                                 </button>
                             ))}
                         </div>
 
                         {selectedPlayer && (() => {
-                            const ps = standings.find((s) => s.playerId === selectedPlayer);
+                            const ps = standings.find((s) => s.id === selectedPlayer);
                             if (!ps) return null;
                             const position = standings.indexOf(ps) + 1;
 
@@ -579,7 +623,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                         <div className="w-16 h-16 mx-auto rounded-full bg-navy-700 flex items-center justify-center text-2xl font-black text-gold-400 mb-3">
                                             #{position}
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">{ps.playerName}</h3>
+                                        <h3 className="text-xl font-bold text-white">{ps.name}</h3>
                                     </div>
 
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -608,7 +652,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                     </div>
 
                                     {/* Partners played with */}
-                                    {ps.partners.length > 0 && (
+                                    {!isTeamFormat && ps.partners && ps.partners.length > 0 && (
                                         <div className="mt-6 pt-4 border-t border-navy-700/50">
                                             <h4 className="text-xs font-medium text-navy-400 uppercase mb-2">
                                                 Partners
@@ -625,6 +669,29 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Team players */}
+                                    {isTeamFormat && (() => {
+                                        const teamObj = tournament.teams.find(t => t.id === ps.id);
+                                        if (!teamObj) return null;
+                                        return (
+                                            <div className="mt-6 pt-4 border-t border-navy-700/50">
+                                                <h4 className="text-xs font-medium text-navy-400 uppercase mb-2">
+                                                    Zawodnicy / Players
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {teamObj.playerIds.map((pid) => (
+                                                        <span
+                                                            key={pid}
+                                                            className="px-2 py-1 rounded-md bg-navy-700 text-navy-200 text-sm"
+                                                        >
+                                                            {getPlayerName(pid)}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             );
                         })()}

@@ -7,19 +7,17 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient() {
     const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
+    if (typeof connectionString !== 'string' || connectionString.trim() === '') {
         throw new Error('DATABASE_URL environment variable is not set');
     }
     console.log('[Prisma] Connecting to database...',
         connectionString.replace(/\/\/.*@/, '//***:***@'));
     const adapter = new PrismaPg({
         connectionString,
-        options: {
-            ssl: connectionString.includes('sslmode=disable')
-                ? false
-                : { rejectUnauthorized: false },
-            connectionTimeoutMillis: 10000,
-        },
+        ssl: connectionString.includes('sslmode=disable')
+            ? false
+            : { rejectUnauthorized: false },
+        connectionTimeoutMillis: 10000,
     });
     return new PrismaClient({ adapter });
 }

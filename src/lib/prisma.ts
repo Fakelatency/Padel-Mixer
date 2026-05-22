@@ -1,4 +1,3 @@
-import { Pool } from 'pg';
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
@@ -13,16 +12,15 @@ function createPrismaClient() {
     }
     console.log('[Prisma] Connecting to database...',
         connectionString.replace(/\/\/.*@/, '//***:***@'));
-    
-    // Disable SSL for localhost or if explicitly disabled
-    const useSsl = !connectionString.includes('localhost') && !connectionString.includes('127.0.0.1') && !connectionString.includes('sslmode=disable');
-    
-    const pool = new Pool({
+    const adapter = new PrismaPg({
         connectionString,
-        ssl: useSsl ? { rejectUnauthorized: false } : false,
-        connectionTimeoutMillis: 10000,
+        options: {
+            ssl: connectionString.includes('sslmode=disable')
+                ? false
+                : { rejectUnauthorized: false },
+            connectionTimeoutMillis: 10000,
+        },
     });
-    const adapter = new PrismaPg(pool);
     return new PrismaClient({ adapter });
 }
 

@@ -70,13 +70,18 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
     const rawStandings = isTeamFormat ? calculateTeamStandings(tournament) : calculateStandings(tournament);
 
+    const getPlayerName = (playerId: string) =>
+        tournament.players.find((p) => p.id === playerId)?.name || playerId;
+
     // Normalize standings to identical interface for display
     const standings = rawStandings.map(s => {
         if ('teamId' in s) {
             // Team Standings
+            const team = tournament.teams?.find(t => t.id === s.teamId);
+            const teamFullName = team ? team.playerIds.map(getPlayerName).join(' & ') : s.teamName;
             return {
                 id: s.teamId,
-                name: s.teamName,
+                name: teamFullName,
                 totalPoints: s.totalPoints,
                 matchesPlayed: s.matchesPlayed,
                 matchesWon: s.matchesWon,
@@ -127,9 +132,6 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
 
     const isAmericanoFormat = tournament.format === 'americano';
 
-    const getPlayerName = (playerId: string) =>
-        tournament.players.find((p) => p.id === playerId)?.name || playerId;
-
     const startEditing = (match: Match) => {
         setEditingMatch(match.id);
         setTempScore1(match.score1 ?? 0);
@@ -141,11 +143,6 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
         const s2 = tournament.scoringSystem - s1;
         setTempScore1(s1);
         setTempScore2(s2);
-        // Auto-save when a non-zero score is selected
-        if (s1 > 0 && editingMatch && isScoreValid(s1, s2, tournament.scoringSystem)) {
-            updateScore(editingMatch, s1, s2);
-            setEditingMatch(null);
-        }
     };
 
     const handleScore2Change = (val: number) => {
@@ -153,11 +150,6 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
         const s1 = tournament.scoringSystem - s2;
         setTempScore1(s1);
         setTempScore2(s2);
-        // Auto-save when a non-zero score is selected
-        if (s2 > 0 && editingMatch && isScoreValid(s1, s2, tournament.scoringSystem)) {
-            updateScore(editingMatch, s1, s2);
-            setEditingMatch(null);
-        }
     };
 
     const saveScore = () => {
@@ -311,13 +303,19 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                                         </div>
                                                     </div>
 
-                                                    {/* Cancel button */}
+                                                    {/* Action buttons */}
                                                     <div className="absolute bottom-2 left-0 right-0 flex gap-2 justify-center z-20">
                                                         <button
                                                             onClick={() => setEditingMatch(null)}
                                                             className="btn-ghost py-1 px-3 text-xs text-white/70 hover:text-white bg-black/30 border border-white/10 shadow-xl shadow-black/30"
                                                         >
                                                             {t.cancel}
+                                                        </button>
+                                                        <button
+                                                            onClick={saveScore}
+                                                            className="btn-primary py-1 px-4 text-xs shadow-xl shadow-black/30"
+                                                        >
+                                                            {t.saveScore || 'Save'}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -506,8 +504,17 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                             </div>
                         </div>
 
-                        <div className="glass-card-static overflow-x-auto">
-                            <table className="w-full">
+                        <div className="glass-card-static overflow-x-auto relative">
+                            {tournament.status !== 'completed' && (
+                                <div className="absolute inset-0 z-10 flex items-center justify-center bg-navy-900/40 backdrop-blur-[6px] rounded-2xl">
+                                    <div className="bg-navy-800/90 border border-gold-500/30 p-6 rounded-xl shadow-2xl max-w-md text-center transform -translate-y-4 mx-4">
+                                        <p className="text-white font-medium text-lg leading-relaxed">
+                                            Wyniki dostępne po zakończeniu turnieju, kawa w barze obok cały czas ;)
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                            <table className={`w-full ${tournament.status !== 'completed' ? 'blur-[8px] opacity-40 select-none pointer-events-none' : ''}`}>
                                 <thead>
                                     <tr className="border-b border-navy-700/50">
                                         <th className="px-4 py-3 text-left text-xs font-bold text-navy-200 uppercase tracking-wider">

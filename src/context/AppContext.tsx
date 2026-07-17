@@ -96,7 +96,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
                 break;
             }
             case 'teamMexicano': {
-                const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, []);
+                const firstRound = generateTeamMexicanoRound(settings.teams, settings.players, [], 1, settings.courts, rankingStrategy, []);
                 rounds = [firstRound];
                 break;
             }
@@ -109,6 +109,7 @@ function createTournamentData(settings: TournamentSettings): Tournament {
                     1,
                     settings.courts,
                     teamMode,
+                    rankingStrategy,
                     []
                 );
                 rounds = [firstRound];
@@ -362,6 +363,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 teamStandings,
                 nextRoundNumber,
                 t.courts,
+                t.rankingStrategy,
                 t.rounds
             );
             t.rounds = [...t.rounds, newRound];
@@ -376,6 +378,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 nextRoundNumber,
                 t.courts,
                 t.teamMode || 'rotating',
+                t.rankingStrategy,
                 t.rounds
             );
             t.rounds = [...t.rounds, newRound];

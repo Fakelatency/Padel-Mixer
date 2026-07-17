@@ -45,9 +45,11 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     const standings = rawStandings.map(s => {
         if ('teamId' in s) {
             // Team Standings
+            const team = tournament.teams?.find(t => t.id === s.teamId);
+            const teamFullName = team ? team.playerIds.map(getPlayerName).join(' & ') : s.teamName;
             return {
                 id: s.teamId,
-                name: s.teamName,
+                name: teamFullName,
                 totalPoints: s.totalPoints,
                 matchesPlayed: s.matchesPlayed,
                 matchesWon: s.matchesWon,

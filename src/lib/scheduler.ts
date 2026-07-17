@@ -498,9 +498,10 @@ export function generateMexicanoRound(
 export function generateTeamMexicanoRound(
     teams: Team[],
     players: Player[],
-    teamStandings: { teamId: string; totalPoints: number }[],
+    teamStandings: { teamId: string; totalPoints: number; pointDifference: number; matchesWon: number }[],
     roundNumber: number,
     courts: number,
+    rankingStrategy: 'points' | 'wins' = 'points',
     existingRounds: Round[] = []
 ): Round {
     const roundMatches: Match[] = [];
@@ -541,9 +542,16 @@ export function generateTeamMexicanoRound(
         orderedTeams = shuffle([...activeTeams]);
     } else {
         const activeStandings = teamStandings.filter(s => activeTeams.some(t => t.id === s.teamId));
-        const sorted = [...activeStandings].sort(
-            (a, b) => b.totalPoints - a.totalPoints
-        );
+        const sorted = [...activeStandings].sort((a, b) => {
+            if (rankingStrategy === 'wins') {
+                if (b.matchesWon !== a.matchesWon) return b.matchesWon - a.matchesWon;
+                if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+                return b.pointDifference - a.pointDifference;
+            }
+            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+            if (b.pointDifference !== a.pointDifference) return b.pointDifference - a.pointDifference;
+            return b.matchesWon - a.matchesWon;
+        });
         orderedTeams = sorted.map(
             (s) => teams.find((t) => t.id === s.teamId)!
         );
@@ -917,14 +925,15 @@ export function generateMixedMexicanoRound(
     players: Player[],
     teams: Team[],
     standings: PlayerStats[],
-    teamStandings: { teamId: string; totalPoints: number }[],
+    teamStandings: { teamId: string; totalPoints: number; pointDifference: number; matchesWon: number }[],
     roundNumber: number,
     courts: number,
     teamMode: 'fixed' | 'rotating',
+    rankingStrategy: 'points' | 'wins' = 'points',
     existingRounds: Round[] = []
 ): Round {
     if (teamMode === 'fixed') {
-        return generateTeamMexicanoRound(teams, players, teamStandings, roundNumber, courts, existingRounds);
+        return generateTeamMexicanoRound(teams, players, teamStandings, roundNumber, courts, rankingStrategy, existingRounds);
     }
 
     const roundMatches: Match[] = [];
@@ -941,17 +950,13 @@ export function generateMixedMexicanoRound(
     const activeMales = males.sort((a, b) => (sitOutCount.get(b.id) || 0) - (sitOutCount.get(a.id) || 0)).slice(0, numTeams);
     const activeFemales = females.sort((a, b) => (sitOutCount.get(b.id) || 0) - (sitOutCount.get(a.id) || 0)).slice(0, numTeams);
 
-    const orderedMales = activeMales.map(m => {
-        const s = standings.find(s => s.playerId === m.id);
-        return { id: m.id, points: s?.totalPoints || 0 };
-    }).sort((a, b) => b.points - a.points);
+    const activeMalesStats = activeMales.map(m => standings.find(s => s.playerId === m.id)!).filter(Boolean);
+    const orderedMales = sortStandings(activeMalesStats, rankingStrategy).map(s => s.playerId);
 
-    const orderedFemales = activeFemales.map(f => {
-        const s = standings.find(s => s.playerId === f.id);
-        return { id: f.id, points: s?.totalPoints || 0 };
-    }).sort((a, b) => b.points - a.points);
+    const activeFemalesStats = activeFemales.map(f => standings.find(s => s.playerId === f.id)!).filter(Boolean);
+    const orderedFemales = sortStandings(activeFemalesStats, rankingStrategy).map(s => s.playerId);
 
-    const pairs: [string, string][] = orderedMales.map((m, i) => [m.id, (orderedFemales[i] || {id:''}).id] as [string, string]).filter(p => p[1] !== '');
+    const pairs: [string, string][] = orderedMales.map((mId, i) => [mId, orderedFemales[i] || ''] as [string, string]).filter(p => p[1] !== '');
 
     for (let c = 0; c < courts; c++) {
         const p1 = pairs[c * 2];

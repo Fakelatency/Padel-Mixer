@@ -54,13 +54,13 @@ export default function Header() {
                             EN
                         </button>
                         <button
-                            onClick={() => setLocale('de')}
-                            className={`relative px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wide transition-all duration-300 ${locale === 'de'
+                            onClick={() => setLocale('es')}
+                            className={`relative px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wide transition-all duration-300 ${locale === 'es'
                                 ? 'bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/30'
                                 : 'text-navy-400 hover:text-navy-200'
                                 }`}
                         >
-                            DE
+                            ES
                         </button>
                         <button
                             onClick={() => setLocale('ua')}

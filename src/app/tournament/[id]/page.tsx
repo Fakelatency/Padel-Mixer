@@ -26,6 +26,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
     const [sortMode, setSortMode] = useState<SortMode>('points');
     const [showFinalConfirm, setShowFinalConfirm] = useState(false);
     const [isFinalRound, setIsFinalRound] = useState(false);
+    const [tablePin, setTablePin] = useState('');
 
     useEffect(() => {
         if (currentTournament?.rankingStrategy) {
@@ -505,7 +506,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                         </div>
 
                         <div className="glass-card-static overflow-x-auto relative">
-                            {tournament.status !== 'finished' && (
+                            {tournament.status !== 'finished' && tablePin !== '7312' && (
                                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-navy-900/40 backdrop-blur-[6px] rounded-2xl">
                                     <div className="bg-navy-800/90 border border-gold-500/30 p-6 rounded-xl shadow-2xl max-w-md text-center transform -translate-y-4 mx-4">
                                         <p className="text-white font-medium text-lg leading-relaxed">
@@ -514,7 +515,7 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                     </div>
                                 </div>
                             )}
-                            <table className={`w-full ${tournament.status !== 'finished' ? 'blur-[8px] opacity-40 select-none pointer-events-none' : ''}`}>
+                            <table className={`w-full ${tournament.status !== 'finished' && tablePin !== '7312' ? 'blur-[8px] opacity-40 select-none pointer-events-none' : ''}`}>
                                 <thead>
                                     <tr className="border-b border-navy-700/50">
                                         <th className="px-4 py-3 text-left text-xs font-bold text-navy-200 uppercase tracking-wider">
@@ -597,6 +598,18 @@ export default function ActiveTournamentPage({ params }: { params: Promise<{ id:
                                 </tbody>
                             </table>
                         </div>
+
+                        {tournament.status !== 'finished' && (
+                            <div className="mt-4 flex justify-center opacity-30 hover:opacity-100 transition-opacity">
+                                <input
+                                    type="password"
+                                    value={tablePin}
+                                    onChange={(e) => setTablePin(e.target.value)}
+                                    placeholder="PIN"
+                                    className="bg-navy-900/50 border border-navy-700/50 rounded-lg px-3 py-1 text-center text-sm text-navy-200 w-24 outline-none focus:border-gold-500/50 transition-colors"
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
 

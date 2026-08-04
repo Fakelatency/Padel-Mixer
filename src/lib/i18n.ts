@@ -217,6 +217,20 @@ export interface Translations {
     uploading: string;
     noPhotos: string;
     loadingGallery: string;
+
+    // Cookie Consent
+    cookieConsentTitle: string;
+    cookieConsentDesc: string;
+    cookieAcceptAll: string;
+    cookieDeclineOptional: string;
+    cookieSettings: string;
+    cookieSettingsTitle: string;
+    cookieEssentialTitle: string;
+    cookieEssentialDesc: string;
+    cookieAnalyticsTitle: string;
+    cookieAnalyticsDesc: string;
+    cookieSavePreferences: string;
+    cookiePreferences: string;
 }
 
 const pl: Translations = {
@@ -409,6 +423,19 @@ const pl: Translations = {
     uploading: 'Przesyłanie...',
     noPhotos: 'Brak zdjęć w galerii',
     loadingGallery: 'Ładowanie galerii...',
+
+    cookieConsentTitle: 'Prywatność i pliki cookie',
+    cookieConsentDesc: 'Używamy plików cookie oraz technologii analitycznych (Google Analytics), aby analizować ruch w aplikacji i usprawniać jej działanie. Możesz zaakceptować wszystkie pliki cookie lub dostosować swoje preferencje.',
+    cookieAcceptAll: 'Zaakceptuj wszystkie',
+    cookieDeclineOptional: 'Tylko niezbędne',
+    cookieSettings: 'Dostosuj',
+    cookieSettingsTitle: 'Ustawienia prywatności i plików cookie',
+    cookieEssentialTitle: 'Niezbędne pliki cookie',
+    cookieEssentialDesc: 'Wymagane do prawidłowego działania aplikacji, autoryzacji sesji oraz zapamiętywania preferencji językowych.',
+    cookieAnalyticsTitle: 'Analityczne pliki cookie (Google Analytics)',
+    cookieAnalyticsDesc: 'Pomagają nam zrozumieć, jak użytkownicy korzystają z aplikacji, generując anonimowe statystyki odwiedzin.',
+    cookieSavePreferences: 'Zapisz preferencje',
+    cookiePreferences: 'Ustawienia cookies',
 };
 
 const en: Translations = {
@@ -601,6 +628,19 @@ const en: Translations = {
     uploading: 'Uploading...',
     noPhotos: 'No photos in gallery',
     loadingGallery: 'Loading gallery...',
+
+    cookieConsentTitle: 'Privacy & Cookies',
+    cookieConsentDesc: 'We use cookies and analytical tools (Google Analytics) to analyze traffic and improve user experience. You can accept all cookies or customize your preferences.',
+    cookieAcceptAll: 'Accept All',
+    cookieDeclineOptional: 'Essential Only',
+    cookieSettings: 'Customize',
+    cookieSettingsTitle: 'Privacy & Cookie Settings',
+    cookieEssentialTitle: 'Essential Cookies',
+    cookieEssentialDesc: 'Required for core application functionality, session authorization, and remembering language preferences.',
+    cookieAnalyticsTitle: 'Analytics Cookies (Google Analytics)',
+    cookieAnalyticsDesc: 'Help us understand how visitors interact with the website by providing anonymous usage statistics.',
+    cookieSavePreferences: 'Save Preferences',
+    cookiePreferences: 'Cookie Preferences',
 };
 
 const es: Translations = {
@@ -793,6 +833,19 @@ const es: Translations = {
     uploading: 'Subiendo...',
     noPhotos: 'No hay fotos en la galería',
     loadingGallery: 'Cargando galería...',
+
+    cookieConsentTitle: 'Privacidad y Cookies',
+    cookieConsentDesc: 'Utilizamos cookies y herramientas analíticas (Google Analytics) para analizar el tráfico y mejorar la experiencia. Puedes aceptar todas las cookies o personalizar tus preferencias.',
+    cookieAcceptAll: 'Aceptar todas',
+    cookieDeclineOptional: 'Solo esenciales',
+    cookieSettings: 'Configurar',
+    cookieSettingsTitle: 'Configuración de Privacidad y Cookies',
+    cookieEssentialTitle: 'Cookies Esenciales',
+    cookieEssentialDesc: 'Necesarias para el funcionamiento básico, la sesión del usuario y las preferencias de idioma.',
+    cookieAnalyticsTitle: 'Cookies Analíticas (Google Analytics)',
+    cookieAnalyticsDesc: 'Nos ayudan a comprender cómo interactúan los usuarios con la aplicación mediante estadísticas anónimas.',
+    cookieSavePreferences: 'Guardar preferencias',
+    cookiePreferences: 'Ajustes de cookies',
 };
 
 const ua: Translations = {
@@ -987,6 +1040,19 @@ const ua: Translations = {
     uploading: 'Завантаження...',
     noPhotos: 'Немає фотографій у галереї',
     loadingGallery: 'Завантаження галереї...',
+
+    cookieConsentTitle: 'Конфіденційність та Cookie',
+    cookieConsentDesc: 'Ми використовуємо файли cookie та аналітику (Google Analytics) для аналізу трафіку та покращення роботи сайту. Ви можете прийняти всі файли cookie або налаштувати свої переваги.',
+    cookieAcceptAll: 'Прийняти всі',
+    cookieDeclineOptional: 'Тільки необхідні',
+    cookieSettings: 'Налаштувати',
+    cookieSettingsTitle: 'Налаштування конфіденційності та Cookie',
+    cookieEssentialTitle: 'Необхідні файли cookie',
+    cookieEssentialDesc: 'Необхідні для базової роботи програми, збереження сесії та мовних налаштувань.',
+    cookieAnalyticsTitle: 'Аналітичні cookie (Google Analytics)',
+    cookieAnalyticsDesc: 'Допомагають нам зрозуміти, як користувачі взаємодіють із додатком за допомогою анонімної статистики.',
+    cookieSavePreferences: 'Зберегти налаштування',
+    cookiePreferences: 'Налаштування cookie',
 };
 
 export const translations: Record<Locale, Translations> = { pl, en, es, ua };

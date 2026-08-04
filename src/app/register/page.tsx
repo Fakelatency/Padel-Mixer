@@ -8,6 +8,7 @@ import { brand } from '@/lib/brand';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 export default function RegisterPage() {
     const { t } = useApp();
@@ -32,6 +33,7 @@ export default function RegisterPage() {
             if (result.error) {
                 setError(result.error.message || t.registerError);
             } else {
+                trackEvent('user_register', { method: 'credentials' });
                 router.push('/');
                 router.refresh();
             }

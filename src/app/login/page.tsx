@@ -8,6 +8,7 @@ import { brand } from '@/lib/brand';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 export default function LoginPage() {
     const { t } = useApp();
@@ -30,6 +31,7 @@ export default function LoginPage() {
             if (result.error) {
                 setError(result.error.message || t.loginError);
             } else {
+                trackEvent('user_login', { method: 'credentials' });
                 router.push('/');
                 router.refresh();
             }

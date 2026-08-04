@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 const formatIcons = brand.icons.formats;
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 export default function HomePage() {
   const { t, tournaments, removeTournament } = useApp();
@@ -95,7 +96,10 @@ export default function HomePage() {
           {/* New Tournament CTA */}
           <div className="flex justify-center animate-slide-up stagger-1" style={{ opacity: 0 }}>
             <button
-              onClick={() => router.push('/tournament/new')}
+              onClick={() => {
+                trackEvent('tournament_create_start');
+                router.push('/tournament/new');
+              }}
               className="btn-primary text-lg px-10 py-4 flex items-center gap-3"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

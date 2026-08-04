@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 interface Photo {
     id: string;
@@ -44,12 +45,7 @@ export default function GalleryPage() {
         name: t.name,
     }));
 
-    useEffect(() => {
-        loadPhotos();
-    }, [filterTournament]);
-
-    async function loadPhotos() {
-        setLoading(true);
+    const fetchPhotos = async () => {
         const url = filterTournament
             ? `${BASE}/api/photos?tournamentId=${filterTournament}`
             : `${BASE}/api/photos`;
@@ -61,7 +57,31 @@ export default function GalleryPage() {
             setPhotos([]);
         }
         setLoading(false);
-    }
+    };
+
+    useEffect(() => {
+        let isMounted = true;
+        const url = filterTournament
+            ? `${BASE}/api/photos?tournamentId=${filterTournament}`
+            : `${BASE}/api/photos`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+                if (isMounted) {
+                    setPhotos(Array.isArray(data) ? data : []);
+                    setLoading(false);
+                }
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setPhotos([]);
+                    setLoading(false);
+                }
+            });
+        return () => {
+            isMounted = false;
+        };
+    }, [filterTournament]);
 
     async function handleUpload() {
         const file = fileInputRef.current?.files?.[0];
@@ -76,11 +96,12 @@ export default function GalleryPage() {
         try {
             const res = await fetch(`${BASE}/api/photos`, { method: 'POST', body: formData });
             if (res.ok) {
+                trackEvent('photo_upload', { has_tournament_link: !!uploadTournament });
                 setShowUpload(false);
                 setUploadCaption('');
                 setUploadTournament('');
                 if (fileInputRef.current) fileInputRef.current.value = '';
-                loadPhotos();
+                fetchPhotos();
             }
         } catch {
             // handle error silently

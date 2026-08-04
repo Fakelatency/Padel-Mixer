@@ -10,6 +10,7 @@ import { generateShareableUrl } from '@/lib/share';
 import Image from 'next/image';
 import { brand } from '@/lib/brand';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -87,6 +88,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
     const handleShare = async () => {
         const url = generateShareableUrl(tournament);
+        trackEvent('share_results', { tournament_id: tournament.id, format: tournament.format, method: 'link_copy' });
         try {
             await navigator.clipboard.writeText(url);
             setCopied(true);

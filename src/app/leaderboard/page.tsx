@@ -7,6 +7,7 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { brand } from '@/lib/brand';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import { trackEvent } from '@/lib/analytics';
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'overall';
 type LeaderboardType = 'all' | 'official';
@@ -39,11 +40,22 @@ export default function LeaderboardPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
+        trackEvent('view_public_leaderboard', { period, type });
+        let isMounted = true;
         fetch(`${BASE}/api/leaderboard?period=${period}&type=${type}`)
             .then(r => r.json())
-            .then(d => { setData(d); setLoading(false); })
-            .catch(() => setLoading(false));
+            .then(d => {
+                if (isMounted) {
+                    setData(d);
+                    setLoading(false);
+                }
+            })
+            .catch(() => {
+                if (isMounted) setLoading(false);
+            });
+        return () => {
+            isMounted = false;
+        };
     }, [period, type]);
 
     const trophies = [brand.icons.podium.placement1, brand.icons.podium.placement2, brand.icons.podium.placement3];

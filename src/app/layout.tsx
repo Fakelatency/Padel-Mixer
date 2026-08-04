@@ -3,6 +3,8 @@ import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { brand } from '@/lib/brand';
 import { BASE_PATH as BASE } from '@/lib/basepath';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import CookieConsent from '@/components/CookieConsent';
 
 export const metadata: Metadata = {
   title: brand.appTitle,
@@ -59,11 +61,13 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: brandCssVars() }} />
       </head>
       <body>
+        <GoogleAnalytics />
         <div className="court-bg" />
         <AppProvider>
           <div className="relative z-10 min-h-screen">
             {children}
           </div>
+          <CookieConsent />
         </AppProvider>
       </body>
     </html>

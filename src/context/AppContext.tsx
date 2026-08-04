@@ -26,6 +26,7 @@ import {
     generateAmericanoNextRound,
 } from '@/lib/scheduler';
 import { authClient } from '@/lib/auth-client';
+import { trackEvent } from '@/lib/analytics';
 
 // ─── State ──────────────────────────────────────────────────
 interface AppState {
@@ -280,6 +281,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const setLocale = useCallback((locale: Locale) => {
         dispatch({ type: 'SET_LOCALE', locale });
+        trackEvent('language_change', { to_locale: locale });
     }, []);
 
     const loadTournamentById = useCallback((id: string) => {
@@ -313,6 +315,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const tournament = createTournamentData(settings);
         await apiSaveTournament(tournament);
         dispatch({ type: 'SET_TOURNAMENT_CREATED', tournament });
+        trackEvent('tournament_create_complete', {
+            format: tournament.format,
+            round_mode: tournament.roundMode,
+            scoring_system: tournament.scoringSystem,
+            players_count: tournament.players.length,
+            courts_count: tournament.courts,
+            team_mode: tournament.teamMode,
+        });
         return tournament;
     }, [state.user]);
 
@@ -344,6 +354,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         t.updatedAt = new Date().toISOString();
         apiSaveTournament(t);
         dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+        trackEvent('match_score_save', {
+            tournament_id: t.id,
+            match_id: matchId,
+            score_1: score1,
+            score_2: score2,
+        });
     }, [state.currentTournament]);
 
     const nextRound = useCallback(() => {
@@ -405,6 +421,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         t.updatedAt = new Date().toISOString();
         apiSaveTournament(t);
         dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+        trackEvent('tournament_round_finish', {
+            tournament_id: t.id,
+            round_number: t.currentRound,
+            format: t.format,
+        });
     }, [state.currentTournament]);
 
     const generateFinalRound = useCallback(() => {
@@ -441,11 +462,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const t = { ...state.currentTournament, status: 'finished' as const, updatedAt: new Date().toISOString() };
         apiSaveTournament(t);
         dispatch({ type: 'UPDATE_TOURNAMENT', tournament: t });
+        trackEvent('tournament_finish', {
+            tournament_id: t.id,
+            format: t.format,
+            total_rounds: t.rounds.length,
+            total_players: t.players.length,
+        });
     }, [state.currentTournament]);
 
     const removeTournament = useCallback((id: string) => {
         apiDeleteTournament(id);
         dispatch({ type: 'DELETE_TOURNAMENT', id });
+        trackEvent('tournament_delete', { tournament_id: id });
     }, []);
 
     return (
